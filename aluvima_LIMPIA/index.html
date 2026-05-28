@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#8B1A2B" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="apple-touch-startup-image" href="/icons/icon-512.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Aluvima" />
+
+  <title>Aluvima Mérida — Vidrio, Aluminio y Acero · Modernizando espacios</title>
+  <meta name="description" content="Fabricación, distribución e instalación de vidrio templado, aluminio y acero inoxidable en Mérida, Venezuela. Stock inmediato. +15 años de experiencia." />
+  <meta name="keywords" content="vidrio templado Mérida, aluminio Mérida, acero inoxidable Venezuela, ventanas aluminio, Aluvima" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Aluvima Mérida — Vidrio, Aluminio y Acero" />
+  <meta property="og:description" content="Modernizando espacios con calidad y categoría. Sector El Caucho, Mérida." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="es_VE" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Iconos Lucide -->
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" integrity="sha384-hJnF5AwidE18GSWTAGHv3ByzzvfNZ1Tcx5y1UUV3WkauuMCEzBJBMSwSt/PUPXnM" crossorigin="anonymous" defer></script>
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       SPLASH SCREEN (visible mientras carga la app)
+  ═══════════════════════════════════════════════ -->
+  <div id="app-splash" class="app-splash" aria-hidden="true">
+    <div class="app-splash-inner">
+      <svg class="app-splash-mark" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="96" fill="#fff" opacity="0.10"/>
+        <circle cx="100" cy="100" r="88" fill="none" stroke="#fff" stroke-width="2" opacity="0.45"/>
+        <polygon points="100,52 116,68 100,84 84,68" fill="#fff"/>
+        <text x="100" y="120" font-family="Montserrat, sans-serif" font-size="28" font-weight="900"
+              fill="#fff" text-anchor="middle" letter-spacing="2">ALUVIMA</text>
+        <text x="100" y="145" font-family="Montserrat, sans-serif" font-size="11" font-weight="600"
+              fill="#fff" opacity="0.85" text-anchor="middle" letter-spacing="3">MÉRIDA · VENEZUELA</text>
+      </svg>
+      <div class="app-splash-loader" aria-label="Cargando"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       CONTENIDO PRINCIPAL
+  ═══════════════════════════════════════════════ -->
+  <div id="main-content" class="main-content visible">
+
+    <!-- BANNER TASA DE CAMBIO (inyectado por main.js si está activo) -->
+    <div id="tasa-banner" class="tasa-banner" hidden>
+      <div class="container tasa-banner-inner">
+        <span class="tasa-label">
+          <i data-lucide="trending-up"></i>
+          Tasa del día:
+        </span>
+        <strong class="tasa-valor">
+          $1 = Bs. <span id="tasa-valor">0,00</span>
+        </strong>
+        <span class="tasa-fecha" id="tasa-fecha"></span>
+      </div>
+    </div>
+
+    <!-- HEADER / NAV -->
+    <header class="site-header" id="site-header">
+      <nav class="nav container">
+        <a href="#inicio" class="nav-logo" aria-label="Aluvima Mérida">
+          <svg class="nav-logo-mark" viewBox="0 0 64 64" aria-hidden="true">
+            <defs>
+              <linearGradient id="navLogoGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#8B1A2B"/>
+                <stop offset="100%" stop-color="#6A1220"/>
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="31" fill="url(#navLogoGrad)"/>
+            <circle cx="32" cy="32" r="29" fill="none" stroke="#fff" stroke-width="0.7" opacity="0.35"/>
+            <!-- rombo decorativo -->
+            <polygon points="32,16 38,22 32,28 26,22" fill="#fff"/>
+            <!-- Texto ALUVIMA central -->
+            <text x="32" y="46" font-family="Montserrat, sans-serif" font-size="13" font-weight="900"
+                  fill="#fff" text-anchor="middle" letter-spacing="0.5">ALUVIMA</text>
+          </svg>
+          <span class="nav-logo-text">
+            <span class="nav-logo-name">ALUVIMA</span>
+            <span class="nav-logo-tagline">Aluminio · Vidrio · Acero</span>
+          </span>
+        </a>
+
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#inicio" class="nav-link">Inicio</a></li>
+          <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
+          <li><a href="#catalogo" class="nav-link">Catálogo</a></li>
+          <li><a href="#pagos" class="nav-link">Pagos</a></li>
+          <li><a href="#contacto" class="nav-link">Contacto</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- Lupa: siempre visible -->
+          <div class="nav-search-wrap" id="nav-search-wrap">
+            <button type="button" class="nav-search-icon" onclick="toggleNavSearch()" aria-label="Buscar productos" title="Buscar productos">
+              <i data-lucide="search"></i>
+              <span class="nav-icon-label">Buscar</span>
+            </button>
+            <input type="search" id="nav-search-input" class="nav-search-input"
+              placeholder="¿Qué buscas? Ej: vidrio, ventana, espejo…"
+              autocomplete="off" aria-label="Buscar producto" />
+            <button type="button" class="nav-search-close" onclick="closeNavSearch()" aria-label="Cerrar búsqueda" hidden>
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+
+          <!-- Mi cuenta -->
+          <button class="customer-btn" id="customer-btn" onclick="openCustomerModal()" aria-label="Mi cuenta">
+            <i data-lucide="user"></i>
+            <span id="customer-btn-text">Mi cuenta</span>
+            <span class="nav-icon-label">Cuenta</span>
+          </button>
+
+          <!-- Carrito -->
+          <button class="cart-btn" id="cart-btn" aria-label="Ver carrito">
+            <i data-lucide="shopping-cart"></i>
+            <span class="cart-count" id="cart-count">0</span>
+            <span class="nav-icon-label">Carrito</span>
+          </button>
+
+          <!-- Hamburguesa -->
+          <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+            <i data-lucide="menu"></i>
+            <span class="nav-icon-label">Menú</span>
+          </button>
+        </div>
+      </nav>
+      <!-- Banner cliente identificado (descuento automático) -->
+      <div class="customer-banner" id="customer-banner" hidden></div>
+    </header>
+
+    <!-- BANNER DE RECUPERACIÓN DE CARRITO -->
+    <div id="cart-recovery-banner" class="cart-recovery-banner" hidden>
+      <div class="container cart-recovery-inner">
+        <span>👋 Tienes <strong id="cart-recovery-count">0</strong> producto(s) en tu carrito. ¿Continúas tu compra?</span>
+        <div class="cart-recovery-actions">
+          <button class="btn btn-sm btn-primary" id="cart-recovery-open">Ver carrito</button>
+          <button class="btn btn-sm btn-ghost" id="cart-recovery-clear" aria-label="Descartar">Descartar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <div class="hero-bg-overlay"></div>
+      <div class="hero-content container">
+        <span class="hero-eyebrow">
+          <i data-lucide="map-pin"></i> Mérida · Sector El Caucho
+        </span>
+
+        <h1 class="hero-title">
+          Vidrio, aluminio y acero
+          <span class="hero-title-accent">a la medida de tu espacio.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Fabricación e instalación profesional. Cotiza por WhatsApp y recibe tu pedido en menos de 1 hora.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="#catalogo" class="btn btn-primary btn-lg">
+            <i data-lucide="shopping-bag"></i> Ver Catálogo
+          </a>
+          <a href="#" id="hero-whatsapp-link" target="_blank" rel="noopener" class="btn btn-outline btn-lg">
+            <i data-lucide="message-circle"></i> Cotizar por WhatsApp
+          </a>
+        </div>
+
+        <!-- Atajos de categoría (chips sobrios con un puntito de color) -->
+        <div class="hero-shortcuts">
+          <a href="#catalogo" class="shortcut" data-filter="vidrio" data-cat="vidrio">
+            <span class="shortcut-dot"></span>
+            <span class="shortcut-label">Vidrio</span>
+          </a>
+          <a href="#catalogo" class="shortcut" data-filter="aluminio" data-cat="aluminio">
+            <span class="shortcut-dot"></span>
+            <span class="shortcut-label">Aluminio</span>
+          </a>
+          <a href="#catalogo" class="shortcut" data-filter="acero" data-cat="acero">
+            <span class="shortcut-dot"></span>
+            <span class="shortcut-label">Acero</span>
+          </a>
+          <a href="#catalogo" class="shortcut" data-filter="accesorios" data-cat="accesorios">
+            <span class="shortcut-dot"></span>
+            <span class="shortcut-label">Accesorios</span>
+          </a>
+        </div>
+
+        <!-- Stats como chips con íconos -->
+        <div class="hero-stats">
+          <div class="stat-chip">
+            <i data-lucide="award"></i>
+            <div><strong>+15 años</strong><span>de experiencia</span></div>
+          </div>
+          <div class="stat-chip">
+            <i data-lucide="zap"></i>
+            <div><strong>Stock</strong><span>inmediato</span></div>
+          </div>
+          <div class="stat-chip">
+            <i data-lucide="wrench"></i>
+            <div><strong>Instalación</strong><span>profesional</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOSOTROS -->
+    <section class="about" id="nosotros">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Nuestra Historia</span>
+          <h2 class="section-title">¿Por qué elegir Aluvima Mérida?</h2>
+          <p class="section-subtitle">
+            Somos la empresa de referencia en Mérida para todo lo relacionado con aluminio, vidrio y acero inoxidable.
+            Combinamos experiencia local, materiales de primera calidad y un equipo de instaladores certificados.
+          </p>
+        </div>
+        <div class="about-grid">
+          <div class="about-card"><div class="about-icon"><i data-lucide="shield-check"></i></div><div class="about-card-text"><h3>Calidad Garantizada</h3><p>Materiales certificados. Cada proyecto lleva el sello de calidad Aluvima.</p></div></div>
+          <div class="about-card"><div class="about-icon"><i data-lucide="zap"></i></div><div class="about-card-text"><h3>Stock Inmediato</h3><p>Vidrios templados de seguridad en medidas estándar disponibles ya. Sin esperas.</p></div></div>
+          <div class="about-card"><div class="about-icon"><i data-lucide="ruler"></i></div><div class="about-card-text"><h3>A Tu Medida</h3><p>Fabricamos e instalamos ventanas, puertas y estructuras 100% personalizadas.</p></div></div>
+          <div class="about-card"><div class="about-icon"><i data-lucide="map-pin"></i></div><div class="about-card-text"><h3>Presencia Local</h3><p>Ubicados en el corazón de Mérida. Conocemos las necesidades de nuestra ciudad.</p></div></div>
+          <div class="about-card"><div class="about-icon"><i data-lucide="wrench"></i></div><div class="about-card-text"><h3>Instalación Profesional</h3><p>Medición, fabricación e instalación con acabado impecable, garantizado.</p></div></div>
+          <div class="about-card"><div class="about-icon"><i data-lucide="headphones"></i></div><div class="about-card-text"><h3>Asesoría Personalizada</h3><p>Te guiamos desde la selección del material hasta el acabado final.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATÁLOGO -->
+    <section class="catalog" id="catalogo">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Nuestros Productos</span>
+          <h2 class="section-title">Catálogo de Productos y Servicios</h2>
+          <p class="section-subtitle">
+            Selecciona los productos que necesitas y arma tu pedido. Te confirmaremos disponibilidad y medidas por WhatsApp.
+          </p>
+        </div>
+
+        <div class="filter-bar" role="group" aria-label="Filtrar por categoría">
+          <button class="filter-btn active" data-filter="all">Todos</button>
+          <button class="filter-btn" data-filter="vidrio">Vidrio</button>
+          <button class="filter-btn" data-filter="aluminio">Aluminio</button>
+          <button class="filter-btn" data-filter="acero">Acero Inoxidable</button>
+          <button class="filter-btn" data-filter="accesorios">Accesorios</button>
+        </div>
+
+        <!-- Contador de resultados -->
+        <p class="catalog-results" id="catalog-results" hidden></p>
+
+        <div class="products-grid" id="products-grid" aria-label="Catálogo de productos"></div>
+
+        <!-- Estado vacío cuando no hay coincidencias -->
+        <div class="catalog-empty" id="catalog-empty" hidden>
+          <i data-lucide="search-x"></i>
+          <h3>No encontramos productos</h3>
+          <p>Intenta con otra palabra o <button type="button" class="link-btn" onclick="resetCatalogSearch()">limpiar la búsqueda</button>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGOS -->
+    <section class="payments" id="pagos">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Métodos de Pago</span>
+          <h2 class="section-title">Pasarelas de Pago Aceptadas</h2>
+          <p class="section-subtitle">
+            Aceptamos los principales métodos de pago en Venezuela. Selecciona el que prefieras y haz clic en el ícono para copiar los datos.
+          </p>
+        </div>
+        <div class="payments-grid" id="payments-grid" aria-label="Pasarelas de pago"></div>
+        <p class="payments-note">
+          <i data-lucide="info"></i>
+          Después de tu pago, envía el comprobante por WhatsApp para confirmar el pedido.
+        </p>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="contact" id="contacto">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Encuéntranos</span>
+          <h2 class="section-title">Ubicación y Horarios</h2>
+          <p class="section-subtitle">Visítanos en nuestra sala de exhibición o contáctanos directamente.</p>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <div class="contact-item">
+              <div class="contact-icon"><i data-lucide="map-pin"></i></div>
+              <div>
+                <h4>Dirección</h4>
+                <p>Sector El Caucho, Av. Los Próceres<br />Mérida, Venezuela</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon"><i data-lucide="clock"></i></div>
+              <div>
+                <h4>Horario de Atención</h4>
+                <p>Lunes a Viernes<br />7:30 AM – 12:00 PM · 1:00 PM – 4:00 PM</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon"><i data-lucide="phone"></i></div>
+              <div>
+                <h4>Teléfonos</h4>
+                <p>
+                  <a href="tel:+584247247358">0424-724 7358</a><br />
+                  <a href="tel:+582744160252">0274-416 0252</a>
+                </p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon"><i data-lucide="message-circle"></i></div>
+              <div>
+                <h4>WhatsApp</h4>
+                <a href="#" id="contact-whatsapp-link" target="_blank" rel="noopener" class="btn btn-whatsapp">
+                  Escribir por WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-map">
+            <iframe id="aluvima-map" title="Ubicación Aluvima Mérida" width="100%" height="350" style="border:0; border-radius: var(--radius-md);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <a id="aluvima-map-link" href="#" target="_blank" rel="noopener" class="map-open-link">
+              <i data-lucide="external-link"></i> Abrir en Google Maps
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <span class="nav-logo">Aluvima <span class="logo-accent">Mérida</span></span>
+            <p>Modernizando espacios con calidad y categoría.</p>
+            <p class="footer-address">Sector El Caucho, Av. Los Próceres · Mérida, Venezuela</p>
+          </div>
+          <div class="footer-links">
+            <h5>Navegación</h5>
+            <ul>
+              <li><a href="#inicio">Inicio</a></li>
+              <li><a href="#nosotros">Nosotros</a></li>
+              <li><a href="#catalogo">Catálogo</a></li>
+              <li><a href="#pagos">Pagos</a></li>
+              <li><a href="#contacto">Contacto</a></li>
+            </ul>
+          </div>
+          <div class="footer-contact">
+            <h5>Contacto</h5>
+            <p><a href="tel:+584247247358">0424-724 7358</a></p>
+            <p><a href="tel:+582744160252">0274-416 0252</a></p>
+            <p>Lun–Vie: 7:30 AM – 4:00 PM</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; <span id="footer-year">2026</span> Aluvima Mérida. Todos los derechos reservados.</p>
+          <p class="footer-legal">
+            <a href="privacidad.html">Política de Privacidad</a> ·
+            <a href="terminos.html">Términos y Condiciones</a>
+          </p>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /#main-content -->
+
+  <!-- PANEL CARRITO -->
+  <aside class="cart-panel" id="cart-panel" aria-label="Carrito" aria-hidden="true">
+    <div class="cart-panel-header">
+      <h3>🛒 Tu Pedido</h3>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Cerrar carrito"><i data-lucide="x"></i></button>
+    </div>
+    <div class="cart-panel-body" id="cart-items-container">
+      <div class="cart-empty" id="cart-empty">
+        <i data-lucide="package-open"></i>
+        <p>Tu carrito está vacío.</p>
+        <a href="#catalogo" class="btn btn-outline-dark btn-sm">Ver Catálogo</a>
+      </div>
+    </div>
+    <div class="cart-panel-footer" id="cart-footer" style="display:none;">
+      <div class="cart-summary">
+        <div class="cart-summary-row"><span>Subtotal:</span><span id="cart-subtotal">$0.00</span></div>
+        <div class="cart-summary-row cart-total-row"><span>Total estimado:</span><span id="cart-total">$0.00</span></div>
+        <div class="cart-summary-row cart-total-bs"><span>≈ En bolívares:</span><span id="cart-total-bs">Bs. 0,00</span></div>
+        <p class="cart-disclaimer">* Precios referenciales en USD. Bolívares calculados a la tasa del día. Sujetos a confirmación.</p>
+      </div>
+      <div class="cart-payment-select">
+        <label for="cart-payment-method">Método de pago preferido</label>
+        <select id="cart-payment-method" aria-label="Método de pago"></select>
+      </div>
+      <button class="btn btn-whatsapp btn-lg btn-block" id="checkout-btn">
+        <i data-lucide="send"></i> Continuar al Pedido
+      </button>
+    </div>
+  </aside>
+  <div class="cart-overlay" id="cart-overlay"></div>
+
+  <!-- MODAL DE DATOS DEL CLIENTE (paso previo a WhatsApp) -->
+  <div class="modal-overlay" id="checkout-modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+      <div class="modal-header">
+        <h3 id="checkout-modal-title">📋 Confirma tu pedido</h3>
+        <button class="modal-close" id="checkout-modal-close" aria-label="Cerrar"><i data-lucide="x"></i></button>
+      </div>
+      <form id="checkout-form" class="modal-body" novalidate>
+        <p class="modal-intro">Solo necesitamos 2 datos. Te confirmamos por WhatsApp en menos de 1 hora.</p>
+
+        <div class="form-row">
+          <label for="cf-nombre">Nombre <span class="req">*</span></label>
+          <input type="text" id="cf-nombre" name="nombre" autocomplete="name" required minlength="3" />
+          <small class="form-error" data-for="cf-nombre"></small>
+        </div>
+
+        <div class="form-row">
+          <label for="cf-telefono">Teléfono / WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="cf-telefono" name="telefono" placeholder="0424-XXXXXXX" autocomplete="tel" required />
+          <small class="form-hint">0412 / 0414 / 0416 / 0424 / 0426 + 7 dígitos.</small>
+          <small class="form-error" data-for="cf-telefono"></small>
+        </div>
+
+        <div class="form-row">
+          <label for="cf-cedula">Cédula <small style="color:#888;font-weight:normal">(opcional — para entrar también con cédula)</small></label>
+          <input type="text" id="cf-cedula" name="cedula" placeholder="V-12345678" />
+          <small class="form-error" data-for="cf-cedula"></small>
+        </div>
+
+        <!-- Factura fiscal (empresas) -->
+        <div class="form-row form-row-check">
+          <label class="check-label">
+            <input type="checkbox" id="cf-factura" name="factura" />
+            <span>Necesito <strong>factura fiscal</strong> (para empresas)</span>
+          </label>
+        </div>
+        <div id="cf-factura-fields" hidden>
+          <div class="form-row">
+            <label for="cf-rif">RIF <span class="req">*</span></label>
+            <input type="text" id="cf-rif" name="rif" placeholder="J-12345678-9" />
+            <small class="form-error" data-for="cf-rif"></small>
+          </div>
+          <div class="form-row">
+            <label for="cf-razon">Razón Social <span class="req">*</span></label>
+            <input type="text" id="cf-razon" name="razon" placeholder="Cristalería ABC, C.A." />
+            <small class="form-error" data-for="cf-razon"></small>
+          </div>
+          <small class="form-hint" style="display:block;margin:-8px 0 12px;color:#7b341e;background:#fffbeb;padding:8px 10px;border-radius:6px;border:1px solid #f6e05e">
+            <i data-lucide="info" style="width:13px;height:13px;vertical-align:-2px"></i>
+            La factura se emite con tasa <strong>BCV oficial</strong> del día. Te llega digital en 24h.
+          </small>
+        </div>
+
+        <div class="form-row">
+          <label for="cf-notas">Notas (opcional)</label>
+          <textarea id="cf-notas" name="notas" rows="2" maxlength="300" placeholder="Medidas exactas, color, fecha deseada, dirección si necesitas delivery..."></textarea>
+        </div>
+
+        <div class="modal-summary" id="modal-summary"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="checkout-modal-cancel">Cancelar</button>
+          <button type="submit" class="btn btn-whatsapp btn-lg">
+            <i data-lucide="send"></i> Enviar por WhatsApp
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPTS (el orden importa) -->
+  <!-- ════════════ MODAL: MI CUENTA (cliente final) ════════════ -->
+  <div class="modal-overlay" id="customer-modal" hidden>
+    <div class="modal-box" style="max-width:480px">
+      <div class="modal-header">
+        <h3 id="customer-modal-title">Mi cuenta</h3>
+        <button class="modal-close" onclick="closeCustomerModal()" aria-label="Cerrar"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" id="customer-modal-body">
+        <!-- contenido dinámico: si no hay sesión → login/registro; si hay sesión → mis datos + mis pedidos -->
+      </div>
+    </div>
+  </div>
+
+  <!-- jsPDF para generar pedidos en PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous" defer></script>
+
+  <!-- Scripts locales con `defer`: se descargan en paralelo y se ejecutan en orden tras parsear el HTML.
+       Esto evita bloquear el render del contenido inicial sin romper la dependencia entre módulos. -->
+  <script src="js/config.js" defer></script>
+  <script src="js/products.js" defer></script>
+  <script src="js/customers.js" defer></script>
+  <script src="js/cart.js" defer></script>
+  <script src="js/checkout.js" defer></script>
+  <script src="js/main.js" defer></script>
+
+  <!-- Service Worker (PWA) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('[PWA] SW registrado:', reg.scope))
+          .catch(err => console.warn('[PWA] SW falló:', err));
+      });
+    }
+  </script>
+
+  <!-- ════════════ Renderer del modal Mi Cuenta ════════════ -->
+  <script>
+  // Año del copyright (mantenimiento cero — se actualiza solo cada 1° de enero)
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  function openCustomerModal() {
+    renderCustomerModal();
+    document.getElementById('customer-modal').hidden = false;
+    if (window.lucide) window.lucide.createIcons();
+  }
+  function closeCustomerModal() {
+    document.getElementById('customer-modal').hidden = true;
+  }
+
+  function renderCustomerModal() {
+    const body = document.getElementById('customer-modal-body');
+    const title = document.getElementById('customer-modal-title');
+    const c = Customers.current();
+
+    if (!c) {
+      title.textContent = '👋 Inicia sesión o regístrate';
+      body.innerHTML = `
+        <p class="modal-intro">Llevamos un historial de tus pedidos. Si eres <strong>cristalero o mayorista</strong>, recibes descuentos automáticos en cada compra.</p>
+
+        <div class="customer-tabs">
+          <button class="ct-tab active" onclick="cm_tab('login')">Tengo cuenta</button>
+          <button class="ct-tab" onclick="cm_tab('register')">Soy nuevo</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="cm-login">
+          <div class="form-row">
+            <label>Teléfono <em style="color:#888;font-weight:normal">o</em> Cédula</label>
+            <input type="text" id="cm-login-tel" placeholder="0414-XXXXXXX  ó  V-12345678" autocomplete="username" />
+            <small class="form-hint">Puedes entrar con tu teléfono (0414-...) o cédula (V-12345678).</small>
+          </div>
+          <div class="form-row">
+            <label>Contraseña</label>
+            <input type="password" id="cm-login-pw" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <p class="form-error" id="cm-login-err" style="min-height:18px"></p>
+          <button class="btn btn-primary btn-lg" style="width:100%" onclick="cm_doLogin()">Iniciar sesión</button>
+          <p style="text-align:center;margin-top:10px;font-size:13px">
+            <a href="#" onclick="event.preventDefault();cm_forgot()" style="color:#8B1A2B;text-decoration:underline">¿Olvidaste tu contraseña?</a>
+          </p>
+          <p class="modal-intro" style="text-align:center;margin-top:8px;font-size:12px">
+            ¿Sin contraseña? Haz un pedido como siempre — tu cuenta se crea sola.
+          </p>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="cm-register" hidden>
+          <div class="form-row">
+            <label>Nombre <span class="req">*</span></label>
+            <input type="text" id="cm-reg-name" placeholder="Tu nombre" autocomplete="name" />
+          </div>
+          <div class="form-row">
+            <label>Teléfono / WhatsApp <span class="req">*</span></label>
+            <input type="tel" id="cm-reg-tel" placeholder="0414-XXXXXXX" autocomplete="tel" />
+          </div>
+          <div class="form-row">
+            <label>Cédula <small style="color:#888">(opcional — para entrar también con cédula)</small></label>
+            <input type="text" id="cm-reg-cedula" placeholder="V-12345678" />
+          </div>
+          <div class="form-row">
+            <label>Crea una contraseña <span class="req">*</span></label>
+            <input type="password" id="cm-reg-pw" placeholder="••••••••" autocomplete="new-password" minlength="8" />
+            <small class="form-hint">Mínimo 8 caracteres, con al menos una letra y un número.</small>
+          </div>
+          <p class="form-error" id="cm-reg-err" style="min-height:18px"></p>
+          <button class="btn btn-primary btn-lg" style="width:100%" onclick="cm_doRegister()">Crear cuenta</button>
+        </div>
+      `;
+      return;
+    }
+
+    // ── Cliente logueado: mostrar datos + pedidos
+    const tipos = Customers.getTipos();
+    const tipo = tipos[c.tipo] || tipos.regular;
+    const desc = Customers.getDescuentoActual();
+    const orders = Customers.getMyOrders();
+
+    title.textContent = `👋 Hola, ${c.nombre.split(' ')[0]}`;
+    body.innerHTML = `
+      <div class="my-account-card">
+        <div class="mac-avatar" style="background:${tipo.color}">${c.nombre.charAt(0).toUpperCase()}</div>
+        <div class="mac-info">
+          <div class="mac-name">${c.nombre}</div>
+          <div class="mac-tel">📱 ${c.telefono}${c.cedula ? `  ·  🪪 ${c.cedula}` : ''}</div>
+          <span class="mac-badge" style="background:${tipo.color}">${tipo.label}${desc !== 0 ? ` · ${desc > 0 ? '+' : ''}${desc}%` : ''}</span>
+        </div>
+      </div>
+
+      ${!c.cedula ? `
+        <div class="mac-alert" style="background:#ebf8ff;border-color:#90cdf4">
+          <i data-lucide="id-card"></i>
+          <div>
+            <strong>Agrega tu cédula</strong><br/>
+            <small>Para iniciar sesión también con tu cédula desde cualquier dispositivo.</small>
+            <button class="btn btn-ghost" style="margin-top:8px;padding:6px 12px;font-size:12px" onclick="cm_addCedulaPrompt()">
+              Agregar cédula
+            </button>
+          </div>
+        </div>
+      ` : ''}
+
+      <div class="mac-stats">
+        <div><strong>${c.totalPedidos || 0}</strong><span>Pedidos</span></div>
+        <div><strong>$${(c.totalGastado||0).toFixed(2)}</strong><span>Total gastado</span></div>
+        <div><strong>${c.requiereFactura ? '✓' : '—'}</strong><span>Factura</span></div>
+      </div>
+
+      ${!c.passwordHash ? `
+        <div class="mac-alert">
+          <i data-lucide="lock"></i>
+          <div>
+            <strong>Protege tu cuenta</strong><br/>
+            <small>Crea una contraseña para acceder desde otros dispositivos.</small>
+            <button class="btn btn-ghost" style="margin-top:8px;padding:6px 12px;font-size:12px" onclick="cm_setPasswordPrompt()">
+              Crear contraseña
+            </button>
+          </div>
+        </div>
+      ` : ''}
+
+      <h4 class="mac-section-title">📦 Mis pedidos</h4>
+      ${orders.length === 0
+        ? '<p class="modal-intro" style="text-align:center;padding:18px 0">Aún no has hecho pedidos.</p>'
+        : '<div class="mac-orders">' + [...orders].reverse().slice(0, 10).map(o => `
+            <div class="mac-order">
+              <div>
+                <div class="mac-order-num">${o.numero || '—'}</div>
+                <div class="mac-order-date">${new Date(o.fecha).toLocaleDateString('es-VE')}</div>
+              </div>
+              <div style="text-align:right">
+                <div class="mac-order-total">$${parseFloat(o.total||0).toFixed(2)}</div>
+                <span class="mac-order-status mac-status-${o.estado||'nuevo'}">${o.estado||'nuevo'}</span>
+              </div>
+            </div>`).join('') + '</div>'}
+
+      <button class="btn btn-ghost" style="width:100%;margin-top:18px" onclick="Customers.logout();closeCustomerModal()">
+        <i data-lucide="log-out"></i> Cerrar sesión
+      </button>
+    `;
+  }
+
+  function cm_tab(which) {
+    document.querySelectorAll('.ct-tab').forEach((t,i) => t.classList.toggle('active', (which === 'login' && i === 0) || (which === 'register' && i === 1)));
+    document.getElementById('cm-login').hidden    = which !== 'login';
+    document.getElementById('cm-register').hidden = which !== 'register';
+  }
+
+  async function cm_doLogin() {
+    const tel = document.getElementById('cm-login-tel').value;
+    const pw  = document.getElementById('cm-login-pw').value;
+    const err = document.getElementById('cm-login-err');
+    const r = await Customers.login(tel, pw);
+    if (!r.ok) { err.textContent = r.error; return; }
+    if (typeof showToast === 'function') showToast(`✅ Bienvenido, ${r.customer.nombre.split(' ')[0]}`, 'success');
+    renderCustomerModal();
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  async function cm_doRegister() {
+    const nombre = document.getElementById('cm-reg-name').value.trim();
+    const tel    = document.getElementById('cm-reg-tel').value.trim();
+    const cedula = document.getElementById('cm-reg-cedula').value.trim();
+    const pw     = document.getElementById('cm-reg-pw').value;
+    const err    = document.getElementById('cm-reg-err');
+    if (nombre.length < 3) { err.textContent = 'Nombre muy corto.'; return; }
+    if (!/^(\+?58|0)?4(12|14|16|24|26)\d{7}$/.test(tel.replace(/[\s\-]/g,''))) {
+      err.textContent = 'Teléfono inválido. Ej: 0414-1234567'; return;
+    }
+    // Validación centralizada en Customers (8+ chars, 1 letra, 1 número)
+    const pwErr = Customers.validatePasswordStrength(pw);
+    if (pwErr) { err.textContent = pwErr; return; }
+    // Cédula es opcional, pero si se ingresa debe ser válida
+    if (cedula && !Customers.looksLikeCedula(cedula)) {
+      err.textContent = 'Cédula inválida. Ej: V-12345678 o solo números.'; return;
+    }
+    // Verificar que la cédula no esté usada por otro cliente
+    if (cedula) {
+      const existente = Customers.findByCedula(cedula);
+      const phoneId = Customers.normalizeTel(tel);
+      if (existente && existente.id !== phoneId) {
+        err.textContent = 'Esta cédula ya está registrada a otro teléfono.'; return;
+      }
+    }
+
+    Customers.upsertFromCheckout({ nombre, telefono: tel, cedula }, false); // false = registro, no es compra
+    await Customers.setPassword(tel, pw);
+    if (typeof showToast === 'function') showToast(`✅ Cuenta creada, ${nombre.split(' ')[0]}`, 'success');
+    renderCustomerModal();
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  async function cm_setPasswordPrompt() {
+    const c = Customers.current();
+    const pw = prompt(`Crea una contraseña para ${c.nombre}\n(mínimo 8 caracteres, con al menos una letra y un número):`);
+    if (!pw) return;
+    try {
+      await Customers.setPassword(c.telefono, pw);
+      if (typeof showToast === 'function') showToast('🔒 Contraseña guardada', 'success');
+      renderCustomerModal();
+      if (window.lucide) window.lucide.createIcons();
+    } catch (e) { alert(e.message); }
+  }
+
+  /** Flujo de recuperación de contraseña — abre WhatsApp a la vendedora asignada */
+  function cm_forgot() {
+    const idInput = prompt('¿Cuál es tu teléfono o cédula registrada?');
+    if (!idInput) return;
+
+    // Buscar el cliente
+    let cust = null;
+    if (Customers.looksLikeCedula(idInput)) {
+      cust = Customers.findByCedula(idInput);
+    } else {
+      const phoneId = Customers.normalizeTel(idInput);
+      try { cust = JSON.parse(localStorage.getItem('aluvima_customers') || '{}')[phoneId]; } catch {}
+    }
+
+    if (!cust) {
+      alert('❌ No encontramos una cuenta con ese teléfono o cédula.\n\nSi nunca has hecho un pedido, primero crea tu cuenta en la pestaña "Soy nuevo".');
+      return;
+    }
+
+    // Buscar a su vendedora asignada (o la default, o el WA general)
+    const vend     = Customers.getVendedoraForCustomer(cust);
+    const cfg      = window.ALUVIMA_CONFIG || {};
+    const waNum    = vend?.whatsapp || cfg.contacto?.whatsapp || '';
+    const vendName = vend ? vend.nombre : (cfg.empresa?.nombre || 'el equipo');
+
+    const msg = `Hola ${vend ? vend.nombre.split(' ')[0] : ''}, soy *${cust.nombre}* (${cust.telefono}${cust.cedula ? ' · ' + cust.cedula : ''}). Olvidé mi contraseña de la web. ¿Pueden resetearla?`;
+    const url = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
+
+    if (confirm(`📲 Para recuperar tu contraseña, vamos a enviar un WhatsApp a ${vendName}.\n\nElla te dará una contraseña temporal en pocos minutos.\n\n¿Abrir WhatsApp?`)) {
+      window.open(url, '_blank', 'noopener');
+    }
+  }
+
+  function cm_addCedulaPrompt() {
+    const c = Customers.current();
+    const ced = prompt('Ingresa tu cédula (V-12345678 o solo números):');
+    if (!ced) return;
+    if (!Customers.looksLikeCedula(ced)) { alert('Cédula inválida. Formato: V-12345678'); return; }
+    const existente = Customers.findByCedula(ced);
+    if (existente && existente.id !== c.id) { alert('Esta cédula ya está registrada a otra cuenta.'); return; }
+    Customers.upsertFromCheckout({ nombre: c.nombre, telefono: c.telefono, cedula: ced }, false); // false = no contar como compra
+    if (typeof showToast === 'function') showToast('🪪 Cédula agregada', 'success');
+    renderCustomerModal();
+    if (window.lucide) window.lucide.createIcons();
+  }
+  </script>
+</body>
+</html>

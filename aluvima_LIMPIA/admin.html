@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Aluvima</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" integrity="sha384-hJnF5AwidE18GSWTAGHv3ByzzvfNZ1Tcx5y1UUV3WkauuMCEzBJBMSwSt/PUPXnM" crossorigin="anonymous" defer></script>
+  <style>
+  /* ══════════════════ RESET & VARS ══════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --red:      #8B1A2B;
+    --red-d:    #6A1220;
+    --navy:     #16213e;
+    --navy-l:   #1d2d55;
+    --bg:       #f0f2f5;
+    --white:    #ffffff;
+    --text:     #2d3748;
+    --muted:    #718096;
+    --border:   #e2e8f0;
+    --ok:       #38a169;
+    --warn:     #dd6b20;
+    --danger:   #e53e3e;
+    --sw:       240px;   /* sidebar width */
+    --hh:       58px;    /* header height */
+    --r:        10px;
+    --shadow:   0 2px 12px rgba(0,0,0,.08);
+  }
+  body { font-family:'Open Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; }
+  a { color:inherit; text-decoration:none; }
+  button, input, select, textarea { font-family:inherit; }
+
+  /* ══════════════════ LOGIN / SETUP ══════════════════
+     Comparten el mismo card y fondo. #setup-screen se muestra
+     solo cuando aún no hay ningún usuario creado. */
+  #login-screen,
+  #setup-screen {
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--navy) 0%, var(--red-d) 100%);
+  }
+  #setup-screen[hidden] { display:none; }
+  .login-card {
+    background:var(--white); border-radius:16px; padding:48px 40px;
+    width:100%; max-width:400px; box-shadow:0 24px 60px rgba(0,0,0,.3);
+  }
+  .login-logo { text-align:center; margin-bottom:28px; }
+  .login-logo h1 { font-family:'Montserrat',sans-serif; font-size:26px; font-weight:700; color:var(--red); }
+  .login-logo p  { color:var(--muted); font-size:13px; margin-top:4px; }
+  .fld { margin-bottom:14px; }
+  .fld label { display:block; font-size:12px; font-weight:600; color:var(--text); margin-bottom:5px; }
+  .fld input  { width:100%; padding:10px 13px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; outline:none; transition:border-color .2s; }
+  .fld input:focus { border-color:var(--red); }
+  .btn-login { width:100%; padding:12px; background:var(--red); color:#fff; border:none; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer; margin-top:6px; transition:background .2s; }
+  .btn-login:hover { background:var(--red-d); }
+  .login-err { color:var(--danger); font-size:12px; text-align:center; min-height:18px; margin-top:10px; }
+
+  /* ══════════════════ LAYOUT ══════════════════ */
+  #admin-panel { display:flex; min-height:100vh; }
+  #admin-panel[hidden] { display:none; }
+
+  /* ══════════════════ SIDEBAR ══════════════════ */
+  #sidebar {
+    width:var(--sw); background:var(--navy); color:#fff;
+    display:flex; flex-direction:column;
+    position:fixed; inset:0 auto 0 0; z-index:200;
+  }
+  .sb-head { padding:18px 18px 14px; border-bottom:1px solid rgba(255,255,255,.07); }
+  .sb-brand { display:flex; align-items:center; gap:8px; }
+  .sb-brand-name { font-family:'Montserrat',sans-serif; font-size:18px; font-weight:700; }
+  .sb-brand-badge { background:var(--red); font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; letter-spacing:.5px; }
+  .sb-user { margin-top:12px; display:flex; align-items:center; gap:10px; }
+  .sb-av { width:32px; height:32px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .sb-info { flex:1; min-width:0; }
+  .sb-name { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sb-role { font-size:11px; color:rgba(255,255,255,.45); }
+
+  nav.sb-nav { flex:1; padding:10px; overflow-y:auto; }
+  .nav-lbl { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,.3); padding:14px 8px 5px; font-weight:700; }
+  [data-nav] {
+    display:flex; align-items:center; gap:10px; padding:9px 10px;
+    border-radius:8px; font-size:13.5px; font-weight:500; color:rgba(255,255,255,.65);
+    cursor:pointer; border:none; background:none; width:100%; text-align:left;
+    transition:all .15s; margin-bottom:1px;
+  }
+  [data-nav]:hover { background:rgba(255,255,255,.07); color:#fff; }
+  [data-nav].active { background:var(--red); color:#fff; }
+  [data-nav] i { width:17px; height:17px; flex-shrink:0; }
+
+  .sb-foot { padding:12px; border-top:1px solid rgba(255,255,255,.07); }
+  .btn-logout { display:flex; align-items:center; gap:8px; width:100%; padding:9px 10px; background:rgba(255,255,255,.05); border:none; border-radius:8px; color:rgba(255,255,255,.55); font-size:13px; cursor:pointer; transition:all .15s; }
+  .btn-logout:hover { background:rgba(229,62,62,.18); color:#fc8181; }
+
+  /* ══════════════════ MAIN ══════════════════ */
+  #admin-main { flex:1; margin-left:var(--sw); display:flex; flex-direction:column; min-height:100vh; }
+
+  .adm-header {
+    background:var(--white); border-bottom:1px solid var(--border);
+    height:var(--hh); padding:0 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:100;
+  }
+  #hdr-title { font-family:'Montserrat',sans-serif; font-size:16px; font-weight:700; }
+  .hdr-actions { display:flex; gap:10px; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+  .btn-red    { background:var(--red);    color:#fff; }
+  .btn-red:hover    { background:var(--red-d); }
+  .btn-ghost  { background:transparent; color:var(--text); border:1.5px solid var(--border); }
+  .btn-ghost:hover  { border-color:var(--red); color:var(--red); }
+  .btn-ok     { background:var(--ok);     color:#fff; }
+  .btn-danger { background:var(--danger); color:#fff; }
+  .btn-wa     { background:#25d366;       color:#fff; }
+  .btn-xs { padding:4px 8px; font-size:12px; border-radius:6px; }
+
+  .adm-content { flex:1; padding:24px; }
+
+  /* ══════════════════ SECTIONS ══════════════════ */
+  .adm-section { display:none; }
+  .adm-section.active { display:block; }
+
+  /* ══ NAV COUNTER (badge en el sidebar) ══ */
+  .nav-counter {
+    display:inline-block; min-width:22px; text-align:center;
+    padding:2px 7px; margin-left:auto; background:var(--red); color:#fff;
+    border-radius:11px; font-size:11px; font-weight:700;
+  }
+  /* ══ CHIPS DEL RENOMBRADOR ══ */
+  .rs-chip {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600;
+    background:#f0f2f5; color:var(--text);
+  }
+  .rs-chip strong { font-size:14px; font-weight:800; }
+  .rs-pending { background:#fff5e6; color:#7b341e; }
+  .rs-done    { background:#e6fffa; color:#22543d; }
+  /* ══ INPUT RENOMBRADOR ══ */
+  .rename-input {
+    width:100%; padding:8px 11px; border:1.5px solid var(--border); border-radius:7px;
+    font-size:14px; outline:none; transition:border-color .15s;
+  }
+  .rename-input:focus { border-color:var(--red); }
+  .rename-input.is-done { background:#f0fff4; border-color:#9ae6b4; }
+  .rename-status { font-size:11px; padding:3px 8px; border-radius:12px; font-weight:700; white-space:nowrap; }
+  .rename-status-pending { background:#fff5e6; color:#7b341e; }
+  .rename-status-done    { background:#c6f6d5; color:#22543d; }
+  /* La fila del renombrador con celdas un poco más altas */
+  #rename-tbody td { padding:10px 12px; vertical-align:middle; }
+  #rename-tbody tr:hover { background:#fafbfc; }
+
+  /* ══════════════════ CARDS ══════════════════ */
+  .card { background:var(--white); border-radius:var(--r); box-shadow:var(--shadow); padding:22px; margin-bottom:20px; }
+  .card-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; gap:16px; flex-wrap:wrap; }
+  .card-title { font-family:'Montserrat',sans-serif; font-size:15px; font-weight:700; }
+  .card-sub   { font-size:12px; color:var(--muted); margin-top:3px; }
+
+  /* ══════════════════ STATS ══════════════════ */
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin-bottom:22px; }
+  .stat { background:var(--white); border-radius:var(--r); padding:18px; box-shadow:var(--shadow); border-left:4px solid var(--red); }
+  .stat:nth-child(2) { border-color:var(--ok); }
+  .stat:nth-child(3) { border-color:var(--warn); }
+  .stat:nth-child(4) { border-color:#805ad5; }
+  .stat-lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:8px; }
+  .stat-val { font-family:'Montserrat',sans-serif; font-size:24px; font-weight:700; }
+
+  /* ══════════════════ DASHBOARD 2-col ══════════════════ */
+  .dash-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .dash-row { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border); }
+  .dash-row:last-child { border:none; }
+  .dash-num { font-weight:700; font-size:13px; }
+  .dash-sub { font-size:12px; color:var(--muted); }
+  .dash-total { font-weight:700; color:var(--red); }
+  .no-data { text-align:center; padding:28px; color:var(--muted); font-size:13px; }
+
+  /* ══════════════════ TABLE ══════════════════ */
+  .tbl-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead th { text-align:left; padding:9px 12px; background:var(--bg); border-bottom:2px solid var(--border); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); white-space:nowrap; }
+  tbody td { padding:11px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  tbody tr:last-child td { border:none; }
+  tbody tr:hover td { background:#fafafa; }
+  .text-right { text-align:right; }
+  .strike { text-decoration:line-through; }
+
+  /* ══════════════════ BADGES ══════════════════ */
+  .badge { display:inline-flex; align-items:center; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+  .bdg-ok      { background:#c6f6d5; color:#276749; }
+  .bdg-warn    { background:#feebc8; color:#7b341e; }
+  .bdg-danger  { background:#fed7d7; color:#742a2a; }
+  .bdg-neutral { background:#e2e8f0; color:#4a5568; }
+  .mt-4 { margin-top:4px; display:inline-flex; }
+
+  /* ══════════════════ PRICE INPUT ══════════════════ */
+  .price-inp {
+    width:88px; padding:5px 9px; border:1.5px solid var(--border); border-radius:6px;
+    font-size:13px; text-align:right; outline:none; transition:border-color .2s;
+  }
+  .price-inp:focus  { border-color:var(--red); }
+  .price-inp.changed { border-color:var(--warn); background:#fffbf0; }
+
+  /* ══════════════════ TOGGLE ══════════════════ */
+  .toggle { position:relative; display:inline-block; width:40px; height:22px; flex-shrink:0; }
+  .toggle input { opacity:0; width:0; height:0; }
+  .tog-slider { position:absolute; inset:0; background:#cbd5e0; border-radius:22px; cursor:pointer; transition:background .2s; }
+  .tog-slider::before { content:''; position:absolute; width:16px; height:16px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .toggle input:checked + .tog-slider { background:var(--ok); }
+  .toggle input:checked + .tog-slider::before { transform:translateX(18px); }
+
+  /* ══════════════════ PRODUCT TABLE ══════════════════ */
+  .prod-thumb { width:42px; height:42px; object-fit:cover; border-radius:7px; background:var(--border); }
+  .prod-name  { font-weight:600; font-size:13px; max-width:180px; }
+
+  /* ══════════════════ SEARCH ══════════════════ */
+  .search-inp {
+    padding:7px 12px 7px 34px; border:1.5px solid var(--border); border-radius:8px;
+    font-size:13px; outline:none; width:200px; transition:border-color .2s;
+    background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") no-repeat 10px center;
+  }
+  .search-inp:focus { border-color:var(--red); background-color:var(--white); }
+
+  /* ══════════════════ PAYMENT CARDS ══════════════════ */
+  .pays-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:14px; }
+  .pay-card { border:2px solid var(--border); border-radius:var(--r); padding:18px; transition:all .2s; }
+  .pay-on  { border-color:#c6f6d5; background:#f0fff4; }
+  .pay-off { opacity:.6; }
+  .pay-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .pay-info { display:flex; align-items:center; gap:10px; }
+  .pay-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; }
+  .pay-name { font-family:'Montserrat',sans-serif; font-size:13px; font-weight:700; }
+  .pay-data { font-size:11px; color:var(--muted); display:flex; flex-direction:column; gap:2px; margin-bottom:8px; }
+  .fiscal-warn { display:flex; align-items:flex-start; gap:6px; background:#fffbeb; border:1px solid #f6e05e; border-radius:7px; padding:8px 10px; font-size:11px; color:#744210; line-height:1.45; }
+
+  /* ══════════════════ ALERTS ══════════════════ */
+  .adm-alert { display:flex; align-items:flex-start; gap:10px; padding:12px 15px; border-radius:9px; margin-bottom:16px; font-size:13px; line-height:1.5; }
+  .adm-alert-warn   { background:#fffbeb; border:1px solid #f6ad55; color:#744210; }
+  .adm-alert-info   { background:#ebf8ff; border:1px solid #90cdf4; color:#2a4a7f; }
+  .adm-alert-danger { background:#fff5f5; border:1px solid #fc8181; color:#742a2a; }
+
+  /* ══════════════════ ORDERS ══════════════════ */
+  .ord-filter { padding:7px 11px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; outline:none; }
+  .ord-status { padding:4px 8px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; outline:none; }
+  .td-actions { display:flex; gap:5px; align-items:center; }
+
+  /* ══════════════════ CLIENTS ══════════════════ */
+
+  /* ══════════════════ USERS ══════════════════ */
+  .user-card { display:flex; align-items:center; gap:14px; padding:16px 18px; border:1.5px solid var(--border); border-radius:var(--r); margin-bottom:12px; }
+  .user-av { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:17px; color:#fff; flex-shrink:0; }
+  .user-name { font-weight:700; font-size:14px; }
+
+  /* ══════════════════ CONFIG FORM ══════════════════ */
+  .cfg-row { display:flex; align-items:center; padding:14px 0; border-bottom:1px solid var(--border); gap:14px; }
+  .cfg-row:last-child { border:none; }
+  .cfg-lbl { flex:1; }
+  .cfg-lbl strong { display:block; font-size:13px; font-weight:600; }
+  .cfg-lbl span { font-size:12px; color:var(--muted); }
+  .cfg-val { font-weight:700; font-size:16px; }
+  .cfg-inp { padding:8px 11px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; outline:none; width:180px; transition:border-color .2s; }
+  .cfg-inp:focus { border-color:var(--red); }
+  select.cfg-inp { width:180px; }
+
+  /* ══════════════════ MODAL ══════════════════ */
+  .adm-modal {
+    display:none; position:fixed; inset:0; z-index:1000;
+    background:rgba(0,0,0,.45); align-items:center; justify-content:center; padding:16px;
+  }
+  .adm-modal:not([hidden]) { display:flex; }
+  .adm-modal-box { background:var(--white); border-radius:14px; width:100%; max-width:480px; box-shadow:0 24px 60px rgba(0,0,0,.2); }
+  .adm-modal-box.wide { max-width:580px; }
+  .adm-mhead { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--border); }
+  .adm-mtitle { font-family:'Montserrat',sans-serif; font-size:15px; font-weight:700; }
+  .adm-mbody  { padding:22px; }
+  .adm-mfoot  { display:flex; gap:8px; justify-content:flex-end; padding:14px 22px; border-top:1px solid var(--border); }
+  .adm-mclose { background:none; border:none; cursor:pointer; color:var(--muted); display:flex; align-items:center; padding:4px; border-radius:6px; }
+  .adm-mclose:hover { background:var(--bg); color:var(--text); }
+
+  /* Order detail */
+  .ord-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  .ord-grid > div strong { display:block; font-size:12px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px; }
+  .ord-nota { margin-bottom:14px; font-size:13px; background:#fffbeb; border:1px solid #f6e05e; border-radius:8px; padding:10px 12px; }
+  .ord-items-title { font-weight:700; font-size:13px; margin-bottom:8px; }
+  .ord-items { background:var(--bg); border-radius:8px; padding:12px; }
+  .ord-item { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .ord-item:last-child { border:none; }
+  .ord-total { font-weight:700; font-size:14px; color:var(--red); }
+
+  /* Form fields in modals */
+  .mfld { margin-bottom:14px; }
+  .mfld label { display:block; font-size:12px; font-weight:600; margin-bottom:5px; }
+  .mfld input, .mfld select { width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; outline:none; transition:border-color .2s; }
+  .mfld input:focus, .mfld select:focus { border-color:var(--red); }
+  .mfld-err { color:var(--danger); font-size:12px; min-height:16px; margin-top:8px; }
+
+  /* ══════════════════ TOAST ══════════════════ */
+  #admin-toast { position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:6px; }
+  .adm-toast { padding:11px 15px; border-radius:9px; font-size:13px; color:#fff; font-weight:500; box-shadow:0 4px 20px rgba(0,0,0,.18); opacity:1; transition:opacity .4s; white-space:nowrap; }
+
+  /* ══════════════════ HELPERS ══════════════════ */
+  .text-sm   { font-size:12px; }
+  .text-muted { color:var(--muted); }
+  .flex-row  { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .gap-10    { gap:10px; }
+
+  /* ══════════════════ BACKUP WIDGET ══════════════════ */
+  .backup-card {
+    background: var(--white); border-radius: var(--r); box-shadow: var(--shadow);
+    border-left: 5px solid var(--ok); padding: 16px 20px; margin-bottom: 18px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .backup-card.backup-critical { background: #fff5f5; }
+  .backup-card.backup-warning  { background: #fffbeb; }
+  .backup-card-head { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 240px; }
+  .backup-status { font-size: 14px; color: var(--text); }
+  .backup-status strong { font-family: 'Montserrat', sans-serif; font-size: 15px; }
+  .backup-msg { font-size: 12.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .backup-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+  /* Animación sutil para llamar la atención cuando es crítico */
+  .backup-critical { animation: backupPulse 2.5s ease-in-out infinite; }
+  @keyframes backupPulse {
+    0%, 100% { box-shadow: var(--shadow); }
+    50%      { box-shadow: 0 0 0 4px rgba(229,62,62,0.15); }
+  }
+
+  /* ══════════════════ RESPONSIVE ══════════════════ */
+  @media (max-width:768px) {
+    #sidebar { transform:translateX(-100%); }
+    #admin-main { margin-left:0; }
+    .adm-content { padding:14px; }
+    .stats { grid-template-columns:1fr 1fr; }
+    .dash-2 { grid-template-columns:1fr; }
+  }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ LOGIN ════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <h1>ALUVIMA</h1>
+      <p>Panel de Administración</p>
+    </div>
+    <form id="login-form">
+      <div class="fld">
+        <label for="inp-user">Usuario</label>
+        <input id="inp-user" type="text" placeholder="Tu usuario" autocomplete="username" required />
+      </div>
+      <div class="fld">
+        <label for="inp-pass">Contraseña</label>
+        <input id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="btn-login">Iniciar Sesión</button>
+    </form>
+    <p class="login-err" id="login-err"></p>
+    <!-- Las credenciales se crean en la primera visita (pantalla #setup-screen).
+         Ya NO se imprimen aquí: era un riesgo de seguridad real. -->
+  </div>
+</div>
+
+<!-- ════════════════ SETUP INICIAL (primera vez) ════════════════
+     Se muestra automáticamente cuando no hay usuarios creados.
+     Reemplaza al bootstrap con credenciales hardcodeadas en el código. -->
+<div id="setup-screen" hidden>
+  <div class="login-card">
+    <div class="login-logo">
+      <h1>ALUVIMA</h1>
+      <p>Configuración inicial</p>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px;line-height:1.5">
+      Es la primera vez que abres el panel.<br/>
+      Crea las credenciales del <strong>administrador</strong> ahora.
+    </p>
+    <form id="setup-form">
+      <div class="fld">
+        <label for="setup-user">Usuario admin</label>
+        <input id="setup-user" type="text" value="admin" autocomplete="username" required minlength="3" />
+      </div>
+      <div class="fld">
+        <label for="setup-pass">Contraseña (mínimo 8 caracteres)</label>
+        <input id="setup-pass" type="password" placeholder="••••••••" autocomplete="new-password" required minlength="8" />
+      </div>
+      <div class="fld">
+        <label for="setup-pass2">Repetir contraseña</label>
+        <input id="setup-pass2" type="password" placeholder="••••••••" autocomplete="new-password" required minlength="8" />
+      </div>
+      <button type="submit" class="btn-login">Crear cuenta y entrar</button>
+    </form>
+    <p class="login-err" id="setup-err"></p>
+    <p style="text-align:center;font-size:11px;color:#aaa;margin-top:14px;line-height:1.5">
+      Anota la contraseña en un lugar seguro.<br/>
+      No se puede recuperar (todo es local en este navegador).
+    </p>
+  </div>
+</div>
+
+<!-- ════════════════ PANEL ════════════════ -->
+<div id="admin-panel" hidden>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sb-head">
+      <div class="sb-brand">
+        <span class="sb-brand-name">ALUVIMA</span>
+        <span class="sb-brand-badge">ADMIN</span>
+      </div>
+      <div class="sb-user">
+        <div class="sb-av" id="sb-avatar">A</div>
+        <div class="sb-info">
+          <div class="sb-name" id="sb-nombre">Usuario</div>
+          <div class="sb-role" id="sb-role">—</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="nav-lbl">Principal</div>
+      <button data-nav="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</button>
+      <button data-nav="productos"><i data-lucide="package"></i>Productos</button>
+      <button data-nav="renombrar"><i data-lucide="edit-3"></i>Renombrar productos <span id="nav-rename-counter" class="nav-counter" hidden>0</span></button>
+      <button data-nav="pagos"><i data-lucide="credit-card"></i>Métodos de Pago</button>
+      <button data-nav="pedidos"><i data-lucide="shopping-bag"></i>Pedidos</button>
+
+      <div class="nav-lbl">Gestión</div>
+      <button data-nav="clientes"><i data-lucide="users"></i>Clientes</button>
+      <button data-nav="vendedoras"><i data-lucide="headset"></i>Vendedoras</button>
+
+      <div class="nav-lbl admin-only">Solo Admin</div>
+      <button data-nav="usuarios" class="admin-only"><i data-lucide="shield-check"></i>Usuarios</button>
+      <button data-nav="configuracion" class="admin-only"><i data-lucide="settings"></i>Configuración</button>
+    </nav>
+
+    <div class="sb-foot">
+      <button class="btn-logout" id="logout-btn">
+        <i data-lucide="log-out" style="width:15px;height:15px"></i>
+        Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="admin-main">
+    <header class="adm-header">
+      <div id="hdr-title">Dashboard</div>
+      <div class="hdr-actions">
+        <button class="btn btn-ghost" onclick="Panel.backupAll()" title="Descarga TODOS los datos en un archivo JSON">
+          <i data-lucide="download" style="width:13px;height:13px"></i> Backup
+        </button>
+        <a href="index.html" target="_blank" class="btn btn-ghost">
+          <i data-lucide="external-link" style="width:13px;height:13px"></i> Ver Sitio
+        </a>
+      </div>
+    </header>
+
+    <!-- Input oculto para restaurar backup desde archivo -->
+    <input type="file" id="restore-file-input" accept="application/json,.json" hidden
+           onchange="Panel.handleRestoreFile(this.files[0])" />
+
+    <div class="adm-content">
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <section id="sec-dashboard" class="adm-section">
+        <!-- Widget de backup (siempre visible arriba) -->
+        <div id="backup-widget"></div>
+
+        <div class="stats">
+          <div class="stat"><div class="stat-lbl">Pedidos totales</div><div class="stat-val" id="stat-pedidos">0</div></div>
+          <div class="stat"><div class="stat-lbl">Ingresos estimados</div><div class="stat-val" id="stat-revenue">$0</div></div>
+          <div class="stat"><div class="stat-lbl">Productos</div><div class="stat-val" id="stat-activos">0/0</div></div>
+          <div class="stat"><div class="stat-lbl">Métodos de pago</div><div class="stat-val" id="stat-pagos">0</div></div>
+        </div>
+        <div class="dash-2">
+          <div class="card">
+            <div class="card-head">
+              <div><div class="card-title">Pedidos recientes</div><div class="card-sub">Últimos 5</div></div>
+              <button class="btn btn-ghost btn-xs" onclick="Panel.go('pedidos')">Ver todos</button>
+            </div>
+            <div id="dash-recent"><p class="no-data">Sin pedidos aún</p></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Estado del sistema</div></div>
+            <div id="dash-status"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ PRODUCTOS ═══ -->
+      <section id="sec-productos" class="adm-section">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Catálogo de Productos</div><div class="card-sub">Edita precios o importa desde Valery</div></div>
+            <div class="flex-row">
+              <input type="text" class="search-inp" placeholder="Buscar…" oninput="Panel.filterProducts(this.value)" />
+              <button class="btn btn-ghost" onclick="Panel.openImportModal()" title="Importar productos desde un Excel exportado de Valery">
+                <i data-lucide="upload-cloud" style="width:13px;height:13px"></i> Importar Valery
+              </button>
+              <button class="btn btn-red" onclick="Panel.saveProducts()">
+                <i data-lucide="save" style="width:13px;height:13px"></i> Guardar
+              </button>
+            </div>
+          </div>
+
+          <div class="adm-alert adm-alert-info">
+            <i data-lucide="info" style="width:17px;height:17px;flex-shrink:0;margin-top:1px"></i>
+            <div>El precio editable es el <strong>Precio Base (Cristalero / costo interno)</strong>. Los demás se calculan automáticamente: 🌐 Público (+45%) · 🧾 BCV (+35%) · 🚛 Mayorista (-5%). Para cambiar los % ve a <strong>Configuración → Tipos de Cliente</strong>.</div>
+          </div>
+
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>Img</th><th>Producto</th><th>Categoría</th>
+                <th class="text-right">P. Original</th>
+                <th class="text-right">Precio Base (Cristalero) + derivados</th>
+                <th>Destacado</th><th>Activo</th><th></th>
+              </tr></thead>
+              <tbody id="prod-tbody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;text-align:right">
+            <button class="btn btn-ghost btn-xs" onclick="Panel.resetAllProducts()">
+              <i data-lucide="rotate-ccw" style="width:11px;height:11px"></i> Restaurar todos los precios
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ RENOMBRAR PRODUCTOS (nombres comerciales) ═══ -->
+      <section id="sec-renombrar" class="adm-section">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">✏️ Renombrar Productos</div>
+              <div class="card-sub">Asigna nombres comerciales bonitos para que se vean en la app. Sin nombre = oculto del catálogo.</div>
+            </div>
+            <div class="flex-row">
+              <input type="text" class="search-inp" id="rename-search" placeholder="Buscar por nombre técnico…" oninput="Panel.filterRename(this.value)" />
+              <select class="search-inp" id="rename-cat-filter" onchange="Panel.filterRenameCat(this.value)" style="max-width:160px">
+                <option value="">Todas las categorías</option>
+                <option value="vidrio">Vidrio</option>
+                <option value="aluminio">Aluminio</option>
+                <option value="acero">Acero</option>
+                <option value="accesorios">Accesorios</option>
+              </select>
+              <select class="search-inp" id="rename-status-filter" onchange="Panel.filterRenameStatus(this.value)" style="max-width:170px">
+                <option value="pending">Solo pendientes</option>
+                <option value="done">Solo renombrados</option>
+                <option value="all">Todos</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="adm-alert adm-alert-info">
+            <i data-lucide="info" style="width:17px;height:17px;flex-shrink:0;margin-top:1px"></i>
+            <div>
+              <strong>Plan híbrido activo.</strong> Solo los productos con <strong>nombre comercial asignado</strong> aparecen en la app del cliente.
+              Empieza por tus 20-30 productos más vendidos: les pones nombres amigables aquí y se publican automáticamente.
+              <label style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-weight:600;cursor:pointer">
+                <input type="checkbox" id="show-all-toggle" onchange="Panel.toggleShowAll(this.checked)" />
+                Mostrar TODOS los productos al público (modo desarrollo, no recomendado en producción)
+              </label>
+            </div>
+          </div>
+
+          <div class="rename-stats" id="rename-stats" style="display:flex;gap:14px;margin:10px 0 14px;flex-wrap:wrap">
+            <span class="rs-chip rs-pending"><strong id="rs-pending">0</strong> pendientes</span>
+            <span class="rs-chip rs-done"><strong id="rs-done">0</strong> renombrados</span>
+            <span class="rs-chip"><strong id="rs-total">0</strong> total</span>
+          </div>
+
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th style="width:14%">Categoría</th>
+                <th style="width:36%">Nombre Técnico (Valery)</th>
+                <th style="width:42%">Nombre Comercial (que verá el cliente)</th>
+                <th style="width:8%">Estado</th>
+              </tr></thead>
+              <tbody id="rename-tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="rename-pager" id="rename-pager" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px">
+            <button class="btn btn-ghost btn-xs" onclick="Panel.renamePage(-1)">← Anterior</button>
+            <span id="rename-pginfo" style="color:var(--muted);font-size:13px">—</span>
+            <button class="btn btn-ghost btn-xs" onclick="Panel.renamePage(1)">Siguiente →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MÉTODOS DE PAGO ═══ -->
+      <section id="sec-pagos" class="adm-section">
+        <div class="adm-alert adm-alert-warn">
+          <i data-lucide="alert-triangle" style="width:18px;height:18px;flex-shrink:0;margin-top:1px"></i>
+          <div><strong>⚖️ Aviso Fiscal — Venezuela</strong><br/>
+            Métodos como <strong>Binance (USDT)</strong>, <strong>Zelle</strong> y <strong>PayPal</strong> pueden generar
+            observaciones del SENIAT por operaciones en divisas no declaradas. Si tienes dudas fiscales, desactívalos
+            aquí hasta consultar con tu contador. El cambio es inmediato.</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Métodos de Pago</div><div class="card-sub">Activa o desactiva lo que ve el cliente al hacer checkout</div></div>
+            <button class="btn btn-red" onclick="Panel.savePayments()">
+              <i data-lucide="save" style="width:13px;height:13px"></i> Guardar
+            </button>
+          </div>
+          <div class="pays-grid" id="pays-grid"></div>
+        </div>
+      </section>
+
+      <!-- ═══ PEDIDOS ═══ -->
+      <section id="sec-pedidos" class="adm-section">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Historial de Pedidos</div><div class="card-sub">Pedidos enviados por WhatsApp desde este dispositivo</div></div>
+            <div class="flex-row">
+              <select id="ord-filter" class="ord-filter" onchange="Panel.filterOrders()">
+                <option value="all">Todos los estados</option>
+                <option value="nuevo">Nuevo</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="entregado">Entregado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+              <button class="btn btn-ghost" onclick="Panel.exportOrders()">
+                <i data-lucide="download" style="width:13px;height:13px"></i> Exportar CSV
+              </button>
+            </div>
+          </div>
+          <div class="adm-alert adm-alert-info">
+            <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0"></i>
+            Los pedidos se registran automáticamente cuando el cliente hace clic en "Enviar por WhatsApp". Actualiza el estado manualmente aquí.
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th># Pedido</th><th>Cliente</th><th>Teléfono</th><th>Fecha</th>
+                <th>Total</th><th>Método Pago</th><th>Estado</th><th>Acciones</th>
+              </tr></thead>
+              <tbody id="ord-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ CLIENTES ═══ -->
+      <section id="sec-clientes" class="adm-section">
+        <div class="adm-alert adm-alert-info">
+          <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0;margin-top:1px"></i>
+          <div>Los clientes se registran <strong>automáticamente</strong> cuando hacen su primer pedido. Aquí solo necesitas <strong>clasificarlos por tipo</strong> (Regular / Cristalero / Mayorista) — el descuento se aplica automáticamente la próxima vez que compren.</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Lista de Clientes</div><div class="card-sub">Auto-registrados desde checkout · ordenados por última compra</div></div>
+            <div class="flex-row">
+              <input type="search" class="search-inp" id="cli-search" placeholder="🔍 Buscar por nombre, teléfono, cédula o RIF…"
+                oninput="Panel.filterCustomers(this.value)" style="width:300px"/>
+              <select id="cli-tipo-filter" onchange="Panel.filterCustomers()" class="ord-filter">
+                <option value="">Todos los tipos</option>
+                <option value="publico">Público</option>
+                <option value="bcv">BCV (sin IVA)</option>
+                <option value="cristalero">Cristalero</option>
+                <option value="mayorista">Mayorista</option>
+              </select>
+            </div>
+          </div>
+          <p id="cli-results" class="text-sm text-muted" style="margin-bottom:8px;display:none"></p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Cédula</th>
+                <th>Tipo (precio)</th>
+                <th title="Override manual del % sobre base">%</th>
+                <th>Vendedora</th>
+                <th>Pedidos</th>
+                <th>Gastado</th>
+                <th>Acciones</th>
+              </tr></thead>
+              <tbody id="cli-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ VENDEDORAS ═══ -->
+      <section id="sec-vendedoras" class="adm-section">
+        <div class="adm-alert adm-alert-info">
+          <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0;margin-top:1px"></i>
+          <div>Las vendedoras son las personas del equipo que atienden a los clientes por WhatsApp. Cuando un cliente hace un pedido, va directo al WhatsApp de SU vendedora asignada (con PDF adjunto). Si no tiene vendedora, va a la marcada como <strong>"por defecto"</strong>, o al WhatsApp general del negocio.</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Equipo de Vendedoras</div><div class="card-sub">Cada cliente puede tener una vendedora asignada</div></div>
+            <button class="btn btn-red" onclick="Panel.newVendedora()">
+              <i data-lucide="user-plus" style="width:13px;height:13px"></i> Nueva Vendedora
+            </button>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>Nombre</th><th>WhatsApp</th><th>Especialidad</th><th>Estado</th>
+                <th>Clientes</th><th>Por defecto</th><th>Acciones</th>
+              </tr></thead>
+              <tbody id="vend-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ USUARIOS (admin only) ═══ -->
+      <section id="sec-usuarios" class="adm-section">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Gestión de Usuarios</div><div class="card-sub">Solo el administrador puede cambiar contraseñas</div></div>
+          </div>
+          <div class="adm-alert adm-alert-info">
+            <i data-lucide="shield" style="width:16px;height:16px;flex-shrink:0"></i>
+            Las contraseñas se almacenan cifradas (SHA-256) en este navegador. Si se cambia el navegador o dispositivo, restablecer aquí.
+          </div>
+          <div id="users-wrap"></div>
+        </div>
+      </section>
+
+      <!-- ═══ CONFIGURACIÓN (admin only) ═══ -->
+      <section id="sec-configuracion" class="adm-section">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Configuración General</div><div class="card-sub">Cambios que se aplican inmediatamente en el sitio</div></div>
+            <button class="btn btn-red" onclick="Panel.saveConfig()">
+              <i data-lucide="save" style="width:13px;height:13px"></i> Guardar
+            </button>
+          </div>
+
+          <div class="cfg-row">
+            <div class="cfg-lbl">
+              <strong>Tasa BCV oficial (Bs por USD)</strong>
+              <span>⚖️ Importante: usar siempre la tasa del BCV (no Binance) para que las facturas fiscales no tengan problemas con el SENIAT.<br/>
+              Consulta diaria: <a href="https://www.bcv.org.ve/" target="_blank" style="color:var(--red);text-decoration:underline">bcv.org.ve</a></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input id="cfg-tasa" type="number" class="cfg-inp" style="width:110px" placeholder="36.50" step="0.01" min="0"/>
+              <span class="text-muted text-sm">Bs/$</span>
+            </div>
+          </div>
+
+          <div class="cfg-row">
+            <div class="cfg-lbl"><strong>Mostrar tasa en el sitio</strong><span>Banner, precios en Bs y carrito</span></div>
+            <select id="cfg-modo-tasa" class="cfg-inp">
+              <option value="1">Sí — mostrar en todo</option>
+              <option value="0">No — solo USD</option>
+            </select>
+          </div>
+
+          <div class="cfg-row">
+            <div class="cfg-lbl"><strong>Horario de atención</strong><span>Aparece en la sección de contacto del sitio</span></div>
+            <input id="cfg-horario" type="text" class="cfg-inp" placeholder="Lun–Sáb: 10AM–7PM"/>
+          </div>
+
+          <div class="cfg-row">
+            <div class="cfg-lbl"><strong>WhatsApp de ventas</strong><span>Formato internacional sin + (ej: 584141234567)</span></div>
+            <input id="cfg-wa" type="text" class="cfg-inp" placeholder="584XXXXXXXXX"/>
+          </div>
+
+          <div class="adm-alert adm-alert-warn" style="margin-top:16px">
+            <i data-lucide="alert-triangle" style="width:16px;height:16px;flex-shrink:0"></i>
+            <div>Estos cambios se guardan en el navegador. Para que sean permanentes (sobrevivan a borrar caché), editar también <code>js/config.js</code>.</div>
+          </div>
+        </div>
+
+        <!-- Editor de mapeo de departamentos Valery → categorías -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">📂 Departamentos de Valery → Categorías</div>
+              <div class="card-sub">Mapea cada código de departamento (de Valery) a una categoría real del sitio</div>
+            </div>
+            <button class="btn btn-red" onclick="Panel.saveDeptMapping()">
+              <i data-lucide="save" style="width:13px;height:13px"></i> Guardar Mapeo
+            </button>
+          </div>
+
+          <div class="adm-alert adm-alert-info">
+            <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0;margin-top:1px"></i>
+            <div>Los productos importados de Valery vienen con códigos como <code>4.1</code>, <code>7.7.1</code>, etc. Asígnalos a <strong>Vidrio</strong>, <strong>Aluminio</strong>, <strong>Acero</strong> o <strong>Accesorios</strong> para que aparezcan en la categoría correcta del sitio. Al guardar, el catálogo se reagrupa al instante.</div>
+          </div>
+
+          <div id="dept-mapping-editor"></div>
+        </div>
+
+        <!-- Editor de tipos de cliente -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Tipos de Cliente y Descuentos</div>
+              <div class="card-sub">Define qué % de descuento recibe cada tipo. Se aplica automáticamente al hacer checkout.</div>
+            </div>
+            <button class="btn btn-red" onclick="Panel.saveTiposCliente()">
+              <i data-lucide="save" style="width:13px;height:13px"></i> Guardar Tipos
+            </button>
+          </div>
+          <div id="tipos-cliente-editor"></div>
+          <p class="text-muted text-sm" style="margin-top:10px">
+            💡 El admin puede sobreescribir el % de descuento por cliente individual en la sección <strong>Clientes</strong> (columna "% Final").
+          </p>
+        </div>
+      </section>
+
+    </div><!-- /adm-content -->
+  </main>
+</div>
+
+<!-- ════════════════ MODALES ════════════════ -->
+
+<!-- Cambio de contraseña -->
+<div id="modal-pw" class="adm-modal" hidden>
+  <div class="adm-modal-box">
+    <div class="adm-mhead">
+      <h3 class="adm-mtitle">Cambiar Contraseña</h3>
+      <button class="adm-mclose" onclick="Panel.closeModal('modal-pw')"><i data-lucide="x" style="width:17px;height:17px"></i></button>
+    </div>
+    <div class="adm-mbody">
+      <p class="text-muted text-sm" id="pw-desc" style="margin-bottom:14px"></p>
+      <div class="mfld"><label>Nueva contraseña (mín. 6 caracteres)</label><input id="pw-new" type="password" placeholder="••••••••"/></div>
+      <div class="mfld"><label>Confirmar contraseña</label><input id="pw-confirm" type="password" placeholder="••••••••"/></div>
+      <p class="mfld-err" id="pw-err"></p>
+    </div>
+    <div class="adm-mfoot">
+      <button class="btn btn-ghost" onclick="Panel.closeModal('modal-pw')">Cancelar</button>
+      <button class="btn btn-red" onclick="Panel.savePw()">Guardar Contraseña</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detalle de pedido -->
+<div id="modal-ord" class="adm-modal" hidden>
+  <div class="adm-modal-box wide">
+    <div class="adm-mhead">
+      <h3 class="adm-mtitle" id="modal-ord-title">Detalle del Pedido</h3>
+      <button class="adm-mclose" onclick="Panel.closeModal('modal-ord')"><i data-lucide="x" style="width:17px;height:17px"></i></button>
+    </div>
+    <div class="adm-mbody" id="modal-ord-body"></div>
+    <div class="adm-mfoot">
+      <button class="btn btn-ghost" onclick="Panel.closeModal('modal-ord')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Nueva/Editar vendedora -->
+<div id="modal-vend" class="adm-modal" hidden>
+  <div class="adm-modal-box">
+    <div class="adm-mhead">
+      <h3 class="adm-mtitle" id="modal-vend-title">Nueva Vendedora</h3>
+      <button class="adm-mclose" onclick="Panel.closeModal('modal-vend')"><i data-lucide="x" style="width:17px;height:17px"></i></button>
+    </div>
+    <div class="adm-mbody">
+      <input type="hidden" id="vend-id"/>
+      <div class="mfld"><label>Nombre completo *</label><input id="vend-nombre" type="text" placeholder="Ej: María González"/></div>
+      <div class="mfld">
+        <label>WhatsApp *</label>
+        <input id="vend-wa" type="tel" placeholder="0414-1234567"/>
+        <small class="text-muted" style="display:block;margin-top:4px">Aquí llegan los pedidos de sus clientes asignados.</small>
+      </div>
+      <div class="mfld"><label>Especialidad <small style="color:#888">(opcional)</small></label><input id="vend-esp" type="text" placeholder="Vidrio templado, ventanas…"/></div>
+      <div class="mfld">
+        <label class="check-label" style="margin:8px 0">
+          <input type="checkbox" id="vend-default"/>
+          <span>Marcar como <strong>vendedora por defecto</strong> (recibe pedidos de clientes sin asignar)</span>
+        </label>
+      </div>
+      <div class="mfld">
+        <label class="check-label" style="margin:8px 0">
+          <input type="checkbox" id="vend-activa" checked/>
+          <span>Activa (recibe pedidos)</span>
+        </label>
+      </div>
+      <p class="mfld-err" id="vend-err"></p>
+    </div>
+    <div class="adm-mfoot">
+      <button class="btn btn-ghost" onclick="Panel.closeModal('modal-vend')">Cancelar</button>
+      <button class="btn btn-red" onclick="Panel.saveVendedora()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset de contraseña de cliente -->
+<div id="modal-reset" class="adm-modal" hidden>
+  <div class="adm-modal-box">
+    <div class="adm-mhead">
+      <h3 class="adm-mtitle">Contraseña reseteada</h3>
+      <button class="adm-mclose" onclick="Panel.closeModal('modal-reset')" aria-label="Cerrar">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="adm-mbody" id="modal-reset-body"><!-- relleno por Panel.resetCustomerPassword() --></div>
+    <div class="adm-mfoot">
+      <button class="btn btn-red" onclick="Panel.closeModal('modal-reset')">Listo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Importador Valery (.xlsx) — el cuerpo lo rellena Panel.openImport() -->
+<div id="modal-import" class="adm-modal" hidden>
+  <div class="adm-modal-box" style="max-width:640px">
+    <div class="adm-mhead">
+      <h3 class="adm-mtitle">Importar productos desde Valery</h3>
+      <button class="adm-mclose" onclick="Panel.closeModal('modal-import')" aria-label="Cerrar">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="adm-mbody" id="import-body"><!-- relleno dinámico --></div>
+  </div>
+</div>
+
+<!-- Contenedor de toasts del panel -->
+<div id="admin-toast" style="position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:9999"></div>
+
+<!-- Carga de librerías y módulos (`defer` para no bloquear el HTML).
+     SheetJS solo se usa en el importador de Valery. -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous" defer></script>
+<script src="js/config.js" defer></script>
+<script src="js/products.js" defer></script>
+<script src="js/customers.js" defer></script>
+<script src="js/admin.js" defer></script>
+
+<script>
+  // El panel necesita PRODUCTS para renderizar el catálogo del admin.
+  // Esperamos al evento `products-loaded` (lo emite el loader async).
+  window.addEventListener('DOMContentLoaded', async () => {
+    try { await window.PRODUCTS_READY; } catch (_) {}
+    Panel.init();
+  });
+</script>
+
+</body>
+</html>

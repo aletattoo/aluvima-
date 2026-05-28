@@ -1,0 +1,52 @@
+{
+  "name": "Aluvima Mérida",
+  "short_name": "Aluvima",
+  "description": "Vidrio, aluminio y acero a la medida de tu espacio. Mérida, Venezuela.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#8B1A2B",
+  "theme_color": "#8B1A2B",
+  "lang": "es-VE",
+  "categories": ["shopping", "business"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ver catálogo",
+      "short_name": "Catálogo",
+      "url": "/#catalogo",
+      "description": "Ir directo al catálogo"
+    },
+    {
+      "name": "Cotizar por WhatsApp",
+      "short_name": "WhatsApp",
+      "url": "/#contacto"
+    }
+  ]
+}

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guía: Publicar Aluvima en Google Play Store</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', system-ui, -apple-system, Arial, sans-serif;
+      color: #14172a; background: #f5f6f7; line-height: 1.7; padding: 24px 16px;
+    }
+    .doc {
+      max-width: 920px; margin: 0 auto; background: #fff;
+      border-radius: 14px; padding: 48px 44px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+    }
+    .doc-head { text-align: center; padding-bottom: 28px; border-bottom: 3px solid #8B1A2B; margin-bottom: 36px; }
+    .doc-head .logo {
+      display: inline-block; background: linear-gradient(135deg, #8B1A2B, #6A1220);
+      color: #fff; padding: 12px 24px; border-radius: 999px;
+      font-weight: 900; letter-spacing: 2px; font-size: 0.95rem;
+    }
+    .doc-head h1 { color: #14172a; font-size: 1.7rem; font-weight: 900; margin: 18px 0 8px; }
+    .doc-head .subtitle { color: #525a66; font-size: 0.95rem; }
+
+    h2 {
+      color: #14172a; font-size: 1.3rem; font-weight: 800;
+      margin: 36px 0 16px; padding: 10px 16px;
+      background: linear-gradient(90deg, #8B1A2B, #6A1220); color: #fff;
+      border-radius: 8px;
+    }
+    h3 {
+      color: #14172a; font-size: 1.1rem; font-weight: 700;
+      margin: 24px 0 12px; padding-left: 12px;
+      border-left: 4px solid #8B1A2B;
+    }
+    h4 {
+      color: #14172a; font-size: 1rem; font-weight: 700;
+      margin: 18px 0 8px;
+    }
+    p, li { font-size: 0.95rem; color: #14172a; margin-bottom: 10px; }
+    strong { color: #8B1A2B; font-weight: 700; }
+    ul, ol { margin: 6px 0 14px 26px; } li { margin-bottom: 6px; }
+
+    code {
+      background: #f0f2f5; color: #8B1A2B;
+      padding: 2px 7px; border-radius: 4px; font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a1a2e; color: #f0f2f5;
+      padding: 14px 18px; border-radius: 8px; overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace; font-size: 0.88rem;
+      margin: 12px 0; line-height: 1.5;
+    }
+    pre code { background: transparent; color: inherit; padding: 0; }
+
+    .info { background: #f0f4ff; border-left: 4px solid #4055d6; padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 0.92rem; }
+    .warn { background: #fffbeb; border-left: 4px solid #d69e2e; padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 0.92rem; }
+    .danger { background: #fff5f5; border-left: 4px solid #c53030; padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 0.92rem; }
+    .success { background: #f0fff4; border-left: 4px solid #38a169; padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 0.92rem; }
+
+    table {
+      width: 100%; border-collapse: collapse; margin: 16px 0;
+      background: #fff; font-size: 0.92rem;
+      border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;
+    }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f8f9fa; font-weight: 700; }
+    tr:last-child td { border-bottom: none; }
+
+    .checklist { list-style: none; margin-left: 0; }
+    .checklist li { padding-left: 28px; position: relative; }
+    .checklist li::before {
+      content: '☐'; position: absolute; left: 0;
+      color: #8B1A2B; font-size: 1.1rem;
+    }
+
+    .phase {
+      background: linear-gradient(135deg, #8B1A2B 0%, #6A1220 100%); color: #fff;
+      padding: 18px 24px; border-radius: 10px; margin: 36px 0 20px;
+      box-shadow: 0 4px 14px rgba(139,26,43,0.25);
+    }
+    .phase strong { color: #ffd700; }
+    .phase h2 { background: transparent; padding: 0; margin: 0; color: #fff; }
+
+    .footer-note { margin-top: 40px; padding-top: 24px; border-top: 1px solid #e2e8f0; color: #525a66; font-size: 0.88rem; text-align: center; }
+
+    .toc {
+      background: #fafbfc; border: 1px solid #e2e8f0;
+      border-radius: 10px; padding: 18px 24px; margin: 20px 0 30px;
+    }
+    .toc h3 { margin-top: 0; border: none; padding: 0; font-size: 1rem; }
+    .toc ol { margin-left: 22px; }
+    .toc a { color: #8B1A2B; text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      body { padding: 12px 8px; }
+      .doc { padding: 24px 18px; border-radius: 10px; }
+      .doc-head h1 { font-size: 1.35rem; }
+      h2 { font-size: 1.1rem; padding: 8px 12px; }
+      table, th, td { font-size: 0.85rem; padding: 7px 9px; }
+      pre { font-size: 0.78rem; padding: 10px 12px; }
+    }
+    @media print { body { background: #fff; padding: 0; } .doc { box-shadow: none; padding: 20px; max-width: 100%; } }
+  </style>
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-head">
+      <div class="logo">ALUVIMA · GUÍA TÉCNICA</div>
+      <h1>Publicar Aluvima en Google Play Store</h1>
+      <p class="subtitle">Paso a paso desde "tengo el código" hasta "la app está en Play Store"</p>
+    </header>
+
+    <div class="toc">
+      <h3>📑 Contenido</h3>
+      <ol>
+        <li><a href="#checklist">Checklist previo</a></li>
+        <li><a href="#fase1">Fase 1 — Subir a Netlify (15 min)</a></li>
+        <li><a href="#fase2">Fase 2 — Empaquetar con PWABuilder (15 min)</a></li>
+        <li><a href="#fase3">Fase 3 — Subir a Play Console (45 min)</a></li>
+        <li><a href="#fase4">Fase 4 — Periodo de prueba (1-2 semanas)</a></li>
+        <li><a href="#fase5">Fase 5 — Producción</a></li>
+        <li><a href="#problemas">Problemas comunes</a></li>
+        <li><a href="#final">Checklist final</a></li>
+      </ol>
+    </div>
+
+    <p>Esta guía te lleva paso a paso desde "tengo el código en mi PC" hasta "la app está en Play Store como Internal Testing, solo los aprobados pueden descargarla". Tiempo total: <strong>~2 horas</strong> la primera vez. Después es 10 min por actualización.</p>
+
+    <h2 id="checklist">📋 Checklist previo</h2>
+    <p>Reúne estos datos antes de empezar:</p>
+    <ul class="checklist">
+      <li><strong>Logo cuadrado 512×512 px</strong> (ya lo tienes: <code>icons/icon-512.png</code>)</li>
+      <li><strong>Feature Graphic</strong> 1024×500 px para Play Store (créalo con Canva)</li>
+      <li><strong>Screenshots móvil</strong>: mínimo 2, máximo 8 capturas reales</li>
+      <li><strong>Descripción corta</strong> (80 caracteres máx)</li>
+      <li><strong>Descripción larga</strong> (4000 caracteres máx, plantilla incluida abajo)</li>
+      <li><strong>URL de privacidad pública</strong>: la tendrás tras subir a Netlify</li>
+      <li><strong>Email de contacto del desarrollador</strong></li>
+      <li><strong>Cuenta Google</strong> nueva o existente para Play Console</li>
+      <li><strong>US$25 en tarjeta</strong> (o Payoneer/Wise desde Venezuela)</li>
+    </ul>
+
+    <div class="phase">
+      <h2 id="fase1" style="border:none">1️⃣ FASE 1 — Subir a Netlify (15 min)</h2>
+      <p>Necesitamos HTTPS público para que PWABuilder pueda analizar la web.</p>
+    </div>
+
+    <h3>1.1 — Sube por primera vez</h3>
+    <ol>
+      <li>Abre <strong>https://app.netlify.com/drop</strong> en tu PC</li>
+      <li>Si no tienes cuenta, te pide registro gratis (con Google es 1 clic)</li>
+      <li>Arrastra la carpeta <code>aluvima2.0</code> completa al área "Drop folder here"</li>
+      <li>Espera ~30 segundos</li>
+      <li>Te dan una URL tipo <code>https://wonderful-pasteur-abc123.netlify.app</code></li>
+    </ol>
+
+    <h3>1.2 — Cambia el nombre del sitio</h3>
+    <ol>
+      <li>Dashboard de Netlify → clic en tu sitio</li>
+      <li><strong>Site settings → Change site name</strong></li>
+      <li>Pon algo memorable, ej: <code>aluvima-merida</code> → tu URL queda <code>https://aluvima-merida.netlify.app</code></li>
+    </ol>
+
+    <h3>1.3 — Conecta dominio propio (opcional)</h3>
+    <p>Si la cliente tiene <code>aluvima.com.ve</code> o quiere comprarlo:</p>
+    <ol>
+      <li><strong>Domain management → Add custom domain</strong></li>
+      <li>Netlify te da las DNS que debes configurar</li>
+      <li>HTTPS automático en ~10 min</li>
+    </ol>
+
+    <h3>1.4 — Verifica que todo carga</h3>
+    <p>Abre en tu móvil: <code>https://tu-sitio.netlify.app</code></p>
+    <ul>
+      <li>✅ Splash crimson aparece</li>
+      <li>✅ Hero carga con los atajos</li>
+      <li>✅ Catálogo muestra "Estamos actualizando el catálogo"</li>
+      <li>✅ En el menú ⋮ del navegador móvil → <strong>"Instalar app"</strong> o <strong>"Añadir a pantalla de inicio"</strong></li>
+    </ul>
+    <div class="warn">
+      ⚠️ Si no aparece "Instalar app", abre en Chrome desktop, F12 → pestaña <strong>Application</strong> → <strong>Manifest</strong> y revisa que todo esté en verde.
+    </div>
+
+    <h3>1.5 — Renombra los primeros 20-30 productos</h3>
+    <ol>
+      <li>Ve a <code>https://tu-sitio.netlify.app/admin.html</code></li>
+      <li>Login: <code>admin</code> / <code>aluvima.admin.2026</code></li>
+      <li><strong>Cambia las contraseñas</strong> (Sidebar → Usuarios)</li>
+      <li>Sidebar → <strong>Renombrar productos</strong></li>
+      <li>La dueña asigna nombres comerciales a los 20-30 más vendidos</li>
+      <li>Refresca la web pública → verás los productos en el catálogo</li>
+    </ol>
+
+    <div class="phase">
+      <h2 id="fase2" style="border:none">2️⃣ FASE 2 — Empaquetar con PWABuilder (15 min)</h2>
+    </div>
+
+    <h3>2.1 — Abre PWABuilder</h3>
+    <ol>
+      <li>Ve a <strong>https://www.pwabuilder.com</strong></li>
+      <li>Pega tu URL de Netlify (ej. <code>https://aluvima-merida.netlify.app</code>)</li>
+      <li>Clic en <strong>"Start"</strong></li>
+    </ol>
+
+    <h3>2.2 — Revisa el PWA Score</h3>
+    <table>
+      <thead><tr><th>Categoría</th><th>Esperado</th></tr></thead>
+      <tbody>
+        <tr><td>Manifest</td><td>30/30 ✅</td></tr>
+        <tr><td>Service Worker</td><td>20/20 ✅</td></tr>
+        <tr><td>Security</td><td>20/20 ✅</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>≥80/100</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h3>2.3 — Generar el paquete Android</h3>
+    <ol>
+      <li>Clic en <strong>"Package For Stores"</strong></li>
+      <li>Elige <strong>"Android"</strong></li>
+      <li>Llena el formulario:</li>
+    </ol>
+    <pre><code>Package ID:        ve.com.aluvima.app
+App name:          Aluvima Mérida
+Launcher name:     Aluvima
+App version:       1.0.0
+App version code:  1
+Display mode:      standalone
+Orientation:       portrait
+Theme color:       #8B1A2B
+Background color:  #8B1A2B
+Splash text color: #FFFFFF
+Status bar color:  #8B1A2B
+Icon URL:          https://aluvima-merida.netlify.app/icons/icon-512.png</code></pre>
+
+    <h4>Sección "Signing key"</h4>
+    <ul>
+      <li>Selecciona <strong>"New"</strong> (te genera firma nueva)</li>
+      <li>Llena los datos (nombre completo, organización Aluvima, Mérida, Venezuela, código VE)</li>
+      <li><strong>Password</strong>: inventa una contraseña fuerte. <strong>APÚNTALA</strong></li>
+      <li>Marca "I agree..." y clic <strong>Generate</strong></li>
+    </ul>
+
+    <p>Te descarga un <code>.zip</code> con:</p>
+    <ul>
+      <li><code>app-release-bundle.aab</code> ← <strong>este es el archivo que sube a Play Store</strong></li>
+      <li><code>signing.keystore</code> ← <strong>GUARDA ESTE ARCHIVO</strong> + tu contraseña en sitio seguro</li>
+      <li><code>next-steps.html</code> ← instrucciones extra</li>
+    </ul>
+    <div class="danger">
+      🔐 <strong>CRÍTICO:</strong> el <code>.keystore</code> + contraseña son IRRECUPERABLES. Si los pierdes, no puedes actualizar la app NUNCA MÁS y tienes que crear una nueva (con otro Package ID). Guárdalos en 2 sitios: tu PC + nube privada.
+    </div>
+
+    <div class="phase">
+      <h2 id="fase3" style="border:none">3️⃣ FASE 3 — Subir a Play Console (45 min)</h2>
+    </div>
+
+    <h3>3.1 — Crear cuenta de desarrollador (US$25 una vez)</h3>
+    <ol>
+      <li>Ve a <strong>https://play.google.com/console</strong></li>
+      <li>Inicia sesión con tu cuenta Google</li>
+      <li>Acepta términos</li>
+      <li>Paga la cuota única de <strong>US$25</strong> (Payoneer o Wise si tu tarjeta venezolana no funciona)</li>
+      <li>Verificar identidad: subir foto del DNI/pasaporte. Tarda 1-2 días.</li>
+    </ol>
+
+    <h3>3.2 — Crear la app</h3>
+    <ol>
+      <li>Dashboard → <strong>"Crear app"</strong></li>
+      <li>Llena:
+        <ul>
+          <li><strong>Nombre:</strong> Aluvima Mérida</li>
+          <li><strong>Idioma:</strong> Español (Venezuela)</li>
+          <li><strong>App o juego:</strong> App</li>
+          <li><strong>Gratis o de pago:</strong> Gratis</li>
+        </ul>
+      </li>
+      <li>Acepta las 2 declaraciones (políticas + leyes EEUU)</li>
+      <li>Clic en <strong>"Crear app"</strong></li>
+    </ol>
+
+    <h3>3.3 — Completa la información de la tienda</h3>
+    <p>En el menú izquierdo verás un <strong>checklist</strong>. Hazlo en este orden:</p>
+
+    <h4>📝 a) Configuración de la app</h4>
+    <ul>
+      <li><strong>Acceso a la app:</strong> "Toda la funcionalidad está disponible sin restricciones"</li>
+      <li><strong>Anuncios:</strong> "No, mi app no contiene anuncios"</li>
+      <li><strong>Clasificación de contenido:</strong> cuestionario rápido. Para Aluvima:
+        <ul>
+          <li>Violencia, sexo, lenguaje obsceno, drogas, apuestas: <strong>No</strong></li>
+          <li>Privacidad: <strong>Sí, recopila datos personales</strong> (nombre, teléfono)</li>
+          <li>→ Te dará clasificación <strong>"Para todos"</strong> ✅</li>
+        </ul>
+      </li>
+      <li><strong>Audiencia objetivo:</strong> 18+ años</li>
+      <li><strong>Marketing:</strong> "Sí, contiene material publicitario propio"</li>
+    </ul>
+
+    <h4>🎨 b) Página principal de Play Store</h4>
+    <ul>
+      <li><strong>Nombre:</strong> Aluvima Mérida</li>
+      <li><strong>Descripción breve (80 chars):</strong> <em>"Vidrio, aluminio y acero a la medida. Cotiza por WhatsApp en Mérida."</em></li>
+      <li><strong>Descripción completa</strong>: plantilla lista para copiar:</li>
+    </ul>
+
+    <pre><code>🏠 ALUVIMA MÉRIDA — Modernizando tus espacios con calidad y categoría
+
+Bienvenido a la app oficial de Aluvima Mérida, tu aliado en vidrio templado,
+aluminio y acero inoxidable en Mérida, Venezuela.
+
+✨ ¿QUÉ ENCUENTRAS EN LA APP?
+• Catálogo completo de productos
+• Precios actualizados en USD y bolívares (tasa BCV del día)
+• Carrito de pedidos con cálculo automático
+• Cotización directa por WhatsApp en menos de 1 hora
+
+🛒 ¿CÓMO FUNCIONA?
+1. Explora el catálogo y agrega lo que necesitas
+2. Confirma tus datos (nombre + WhatsApp)
+3. Envías el pedido por WhatsApp
+4. Un asesor te confirma disponibilidad y precio final
+5. Coordinas pago y entrega/instalación
+
+🏆 ¿POR QUÉ ALUVIMA?
+• +15 años de experiencia en Mérida
+• Stock inmediato de vidrios templados estándar
+• Fabricación 100% a medida (ventanas, mamparas, puertas)
+• Instalación profesional certificada
+• Materiales con garantía
+
+💳 MÉTODOS DE PAGO
+Pago Móvil · Transferencia · Zelle · Binance Pay · Efectivo USD/Bs.
+
+📍 UBICACIÓN
+Sector El Caucho, Av. Los Próceres, Mérida, Venezuela
+Lunes a viernes: 7:30 AM – 12:00 PM · 1:00 PM – 4:00 PM
+
+📞 CONTACTO
+WhatsApp: 0424-724 7358
+Tel. local: 0274-416 0252
+
+🔒 PRIVACIDAD
+No recopilamos datos sin tu consentimiento. No vendemos información a terceros.
+No procesamos pagos en línea: todo se confirma con un asesor por WhatsApp.
+
+Ver política completa: https://aluvima-merida.netlify.app/privacidad.html</code></pre>
+
+    <ul>
+      <li><strong>Ícono de la app:</strong> sube <code>icons/icon-512.png</code></li>
+      <li><strong>Gráfico destacado:</strong> 1024×500. Créalo con Canva: logo grande + slogan</li>
+      <li><strong>Capturas:</strong> mínimo 2. Las tomas así:
+        <ol>
+          <li>Abre el sitio en Chrome desktop → F12 → activa modo móvil (Pixel 5)</li>
+          <li>Captura: Hero · Catálogo · Card de producto · Carrito · Confirmar pedido</li>
+          <li>Las subes (1080×1920 aprox.)</li>
+        </ol>
+      </li>
+    </ul>
+
+    <h4>🔐 c) Privacidad y seguridad</h4>
+    <ul>
+      <li><strong>Política de privacidad:</strong> pega <code>https://aluvima-merida.netlify.app/privacidad.html</code></li>
+      <li><strong>Permisos:</strong> Play detecta automáticamente que no pide cámara/contactos/etc.</li>
+    </ul>
+
+    <h3>3.4 — Subir el .aab a Internal Testing</h3>
+    <ol>
+      <li>Menú izquierdo → <strong>Pruebas → Pruebas internas</strong></li>
+      <li><strong>"Crear nueva versión"</strong></li>
+      <li>Acepta firma con Play (recomendado)</li>
+      <li>Arrastra el archivo <code>app-release-bundle.aab</code></li>
+      <li><strong>Nombre versión:</strong> 1.0.0 · <strong>Notas:</strong> Versión inicial</li>
+      <li><strong>Guardar → Revisar versión → Iniciar lanzamiento</strong></li>
+    </ol>
+
+    <h3>3.5 — Agregar testers</h3>
+    <ol>
+      <li>Misma sección → pestaña <strong>"Testers"</strong></li>
+      <li><strong>"Crear lista de correos"</strong> → llamala "Aluvima Internal"</li>
+      <li>Agrega emails (uno por línea): el tuyo, la dueña, 2-3 personas más</li>
+      <li>Guarda</li>
+    </ol>
+
+    <h3>3.6 — Compartir el link privado</h3>
+    <ol>
+      <li>Play Console te da un <strong>"Enlace de pruebas"</strong></li>
+      <li>Mándalo por WhatsApp a tus testers</li>
+      <li>Cada uno: abre el link → "Unirse a la prueba" → espera 5-10 min → Play Store → buscar "Aluvima Mérida" → instalar</li>
+    </ol>
+    <div class="info">
+      ⏱️ La primera revisión de Google tarda <strong>horas a 1 día</strong> incluso para Internal Testing.
+    </div>
+
+    <div class="phase">
+      <h2 id="fase4" style="border:none">4️⃣ FASE 4 — Periodo de prueba (1-2 semanas)</h2>
+    </div>
+
+    <p>Los dueños prueban la app real. Tú vas:</p>
+    <ol>
+      <li><strong>Recibiendo feedback</strong> (qué gusta, qué cambian, bugs)</li>
+      <li><strong>Iterando:</strong> cambios en código → push a Netlify → la PWA se actualiza al instante</li>
+      <li><strong>Solo si cambias funcionalidad nueva</strong> (no solo CSS/textos) necesitas re-empaquetar:
+        <ul>
+          <li>PWABuilder otra vez</li>
+          <li>Sube el nuevo <code>.aab</code></li>
+          <li>Sube <strong>App version code</strong> (1 → 2 → 3...)</li>
+          <li>Las pruebas internas se actualizan solas</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="phase">
+      <h2 id="fase5" style="border:none">5️⃣ FASE 5 — Producción (cuando todos aprueben)</h2>
+    </div>
+
+    <ol>
+      <li>Play Console → <strong>Pruebas internas → "Promover a producción"</strong></li>
+      <li>Confirma: la app aparece en Play Store pública en ~3-7 días (revisión Google)</li>
+      <li>Cualquiera la busca "Aluvima Mérida" en Play Store → la instala</li>
+    </ol>
+    <div class="success">
+      ¿Quieres bajarla en cualquier momento? Play Console → <strong>Producción → "No publicado"</strong>. Vuelve a Internal Testing en 1 clic.
+    </div>
+
+    <h2 id="problemas">🆘 Problemas comunes</h2>
+
+    <h3>"PWA Score &lt;80 en PWABuilder"</h3>
+    <ul>
+      <li>Revisa que el sitio sea HTTPS</li>
+      <li>Verifica que <code>manifest.webmanifest</code> cargue</li>
+      <li>Verifica que <code>service-worker.js</code> se registre (Chrome DevTools → Application)</li>
+    </ul>
+
+    <h3>"No me deja pagar los US$25"</h3>
+    <ul>
+      <li>Tarjeta venezolana: prueba con Payoneer o Wise</li>
+      <li>O alguien fuera del país hace el pago a tu nombre</li>
+    </ul>
+
+    <h3>"Mi app fue rechazada por Play"</h3>
+    <p>Razones típicas:</p>
+    <ul>
+      <li><strong>Política de privacidad inaccesible:</strong> revisa que el link funcione público</li>
+      <li><strong>App muy parecida a otra:</strong> cambia ícono / nombre / descripción</li>
+      <li><strong>Pide permisos que no usa:</strong> PWAs piden mínimos, debería estar OK</li>
+    </ul>
+
+    <h3>"No aparece el botón Instalar app en Chrome móvil"</h3>
+    <ul>
+      <li>Necesita HTTPS ✅ (Netlify lo da)</li>
+      <li>Necesita manifest + service worker ✅ (ya están)</li>
+      <li>Necesita al menos 1 ícono 192×192 ✅ (ya está)</li>
+      <li>A veces Chrome esconde el botón hasta que pasen 30s en el sitio</li>
+    </ul>
+
+    <h2 id="final">✅ Checklist final antes de Producción</h2>
+    <ul class="checklist">
+      <li>La dueña aprobó el diseño general</li>
+      <li>Hay al menos 30-50 productos con <code>displayName</code></li>
+      <li>Privacy + Términos accesibles públicamente</li>
+      <li>Contraseñas admin cambiadas (no las default)</li>
+      <li>Tasa BCV actualizada</li>
+      <li>WhatsApp de producción configurado (no el de prueba)</li>
+      <li>Logo profesional</li>
+      <li>App probada por 3+ personas durante 1+ semana</li>
+      <li>No hay bugs críticos pendientes</li>
+      <li>Screenshots subidas en Play Store</li>
+    </ul>
+
+    <p style="text-align:center; margin: 30px 0; font-size: 1.2rem;">
+      <strong style="color:#8B1A2B;">¡Listo para producción! 🚀</strong>
+    </p>
+
+    <h2>📞 Contactos útiles</h2>
+    <ul>
+      <li><strong>Soporte Play Console:</strong> https://support.google.com/googleplay/android-developer</li>
+      <li><strong>Soporte PWABuilder:</strong> https://github.com/pwa-builder/PWABuilder/issues</li>
+      <li><strong>Soporte Netlify:</strong> https://answers.netlify.com</li>
+    </ul>
+
+    <div class="footer-note">
+      Guía generada para Aluvima Mérida · Para imprimir: usa Ctrl+P
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,122 @@
+# ════════════════════════════════════════════════════════════════════
+# Aluvima Mérida — configuración para Netlify
+# ────────────────────────────────────────────────────────────────────
+# Netlify lee este archivo en cada deploy. Va en la RAÍZ del repo /
+# del directorio que publicas (al mismo nivel que index.html).
+#
+# Netlify YA hace automáticamente (no hace falta configurar):
+#   • gzip + brotli en text/html, css, js, json, svg
+#   • HTTPS con certificado Let's Encrypt
+#   • HTTP/2
+#   • CDN global
+#
+# Aquí solo configuramos lo que NO viene por defecto:
+#   1. Cabeceras de cache (cuánto tiempo guarda el navegador cada archivo)
+#   2. `noindex` en admin.html para que Google no lo encuentre
+# ════════════════════════════════════════════════════════════════════
+
+[build]
+  publish = "."
+  # Antes de publicar, removemos del bundle los archivos internos que NO
+  # deben ser accesibles públicamente: notas para la dueña, guía de
+  # publicación en Play Store, y la auditoría técnica con el mapa de
+  # issues conocidos. Quedan en el repo de GitHub (que es privado) para
+  # referencia tuya, pero el sitio público en Netlify no los expone.
+  command = "rm -f AUDITORIA.md LEEME.html PARA_LA_DUENA.html PUBLICAR_PLAY_STORE.html PWA.html"
+
+# ─── 1. Cabeceras por tipo de archivo ───────────────────────────────
+
+# HTML: cache corto (1 hora) para que los cambios lleguen rápido al usuario
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+
+# CSS y JS: cache medio (7 días). Si haces cambios y quieres forzar refresh,
+# el service worker ya bumpea su versión a 'aluvima-v3' y purga el viejo.
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/js/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# Catálogo de productos: cache de 1 día — un compromiso entre frescura
+# (cuando importas Valery, cambia el JSON) y rendimiento.
+[[headers]]
+  for = "/js/products.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+# Imágenes e iconos: cache de 1 año (no cambian)
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Manifest del PWA: cache de 1 día (cambios de icono / nombre)
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Content-Type = "application/manifest+json"
+
+# Service worker: NUNCA cachear (debe pegarse al network siempre para
+# detectar versiones nuevas — sino los usuarios se quedan en una versión vieja)
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ─── 2. Privacidad del panel admin ───────────────────────────────────
+#
+# X-Robots-Tag le dice a Google que NO indexe esta URL, ni la archive,
+# ni siga sus enlaces. Refuerza el <meta name="robots"> que ya está en
+# el HTML, y aplica incluso si alguien comparte el link directo.
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive, nosnippet"
+    X-Frame-Options = "DENY"
+
+# ─── 3. Seguridad general (cabeceras estándar baratas y útiles) ───────
+#
+# Content-Security-Policy: la defensa más fuerte contra XSS. Le dice al
+# navegador "solo permití scripts/estilos/imágenes de estos orígenes".
+# Si alguien logra inyectar <script src="evil.com">, el navegador lo
+# bloquea. 'unsafe-inline' en scripts es un mal necesario porque hay
+# decenas de onclick="..." en el HTML; refactorearlos a addEventListener
+# es trabajo futuro que permitiría endurecer aún más esta política.
+#
+# Orígenes permitidos:
+#   script-src:  unpkg (lucide), jsdelivr (jsPDF, xlsx)
+#   style-src:   fonts.googleapis (Google Fonts CSS)
+#   font-src:    fonts.gstatic     (Google Fonts woff)
+#   connect-src: file.io           (subida de PDF en checkout.js)
+#   img-src:     https: + data:    (iconos PWA + imagenes externas)
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://file.io; object-src 'none'; base-uri 'self'; form-action 'self' https://wa.me; frame-src https://www.google.com https://maps.google.com; frame-ancestors 'self'; upgrade-insecure-requests"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+
+# ════════════════════════════════════════════════════════════════════
+# El archivo `.htaccess` de la raiz puede borrarse: Netlify lo ignora.
+# Se dejo por si algun dia migras a un hosting Apache.
+# ════════════════════════════════════════════════════════════════════
