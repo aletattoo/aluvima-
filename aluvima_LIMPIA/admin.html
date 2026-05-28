@@ -712,7 +712,10 @@
       <section id="sec-usuarios" class="adm-section">
         <div class="card">
           <div class="card-head">
-            <div><div class="card-title">Gestión de Usuarios</div><div class="card-sub">Solo el administrador puede cambiar contraseñas</div></div>
+            <div><div class="card-title">Gestión de Usuarios</div><div class="card-sub">Solo el administrador puede crear, editar o restablecer contraseñas</div></div>
+            <button class="btn btn-red" onclick="Panel.openNewUserModal()">
+              <i data-lucide="user-plus" style="width:15px;height:15px"></i> Nuevo Usuario
+            </button>
           </div>
           <div class="adm-alert adm-alert-info">
             <i data-lucide="shield" style="width:16px;height:16px;flex-shrink:0"></i>
@@ -811,6 +814,51 @@
 </div>
 
 <!-- ════════════════ MODALES ════════════════ -->
+
+<!-- Nuevo usuario (solo admin puede abrirlo) -->
+<div id="modal-new-user" class="adm-modal" hidden>
+  <div class="adm-modal-box">
+    <div class="adm-mhead">
+      <h3 class="adm-mtitle">Nuevo Usuario</h3>
+      <button class="adm-mclose" onclick="Panel.closeModal('modal-new-user')"><i data-lucide="x" style="width:17px;height:17px"></i></button>
+    </div>
+    <div class="adm-mbody">
+      <p class="text-muted text-sm" style="margin-bottom:14px">
+        Crea una cuenta para el equipo. El rol <strong>Propietario</strong> da acceso operativo (productos, pedidos, clientes, tasa, horario, WhatsApp) sin tocar configuración avanzada ni gestión de usuarios.
+      </p>
+      <div class="mfld">
+        <label>Usuario <span style="color:#e53e3e">*</span></label>
+        <input id="nu-username" type="text" placeholder="propietario" autocomplete="off"/>
+        <small class="text-muted text-sm">Solo letras minúsculas, números y guiones. Mín. 3 caracteres.</small>
+      </div>
+      <div class="mfld">
+        <label>Nombre visible <span style="color:#e53e3e">*</span></label>
+        <input id="nu-nombre" type="text" placeholder="Ej: Marisol Rodríguez" autocomplete="off"/>
+      </div>
+      <div class="mfld">
+        <label>Rol <span style="color:#e53e3e">*</span></label>
+        <select id="nu-role">
+          <option value="propietario">👤 Propietario — acceso operativo del día a día</option>
+          <option value="admin">🔑 Administrador — acceso total al panel</option>
+        </select>
+      </div>
+      <div class="mfld">
+        <label>Contraseña inicial (mín. 8 caracteres) <span style="color:#e53e3e">*</span></label>
+        <input id="nu-pass" type="password" placeholder="••••••••" autocomplete="new-password"/>
+        <small class="text-muted text-sm">El usuario debería cambiarla en su primer login.</small>
+      </div>
+      <div class="mfld">
+        <label>Confirmar contraseña <span style="color:#e53e3e">*</span></label>
+        <input id="nu-pass2" type="password" placeholder="••••••••" autocomplete="new-password"/>
+      </div>
+      <p class="mfld-err" id="nu-err"></p>
+    </div>
+    <div class="adm-mfoot">
+      <button class="btn btn-ghost" onclick="Panel.closeModal('modal-new-user')">Cancelar</button>
+      <button class="btn btn-red" onclick="Panel.saveNewUser()">Crear Usuario</button>
+    </div>
+  </div>
+</div>
 
 <!-- Cambio de contraseña -->
 <div id="modal-pw" class="adm-modal" hidden>
@@ -923,6 +971,9 @@
 <script src="js/products.js" defer></script>
 <script src="js/customers.js" defer></script>
 <script src="js/admin.js" defer></script>
+<!-- Extiende Panel con funciones de gestión de usuarios. Vive aparte
+     porque admin.js está cerca del límite de tamaño manejable. -->
+<script src="js/admin-users.js" defer></script>
 
 <script>
   // El panel necesita PRODUCTS para renderizar el catálogo del admin.
